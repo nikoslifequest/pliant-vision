@@ -1,6 +1,7 @@
 import React from 'react'
 import { useState } from 'react'
 import { AreaChart, Area, XAxis, ResponsiveContainer } from 'recharts'
+import CardCreationFlow from './CardCreationFlow'
 import { 
   CreditCard as CreditCardIcon,
   Money,
@@ -33,6 +34,7 @@ import virtualCardLime from '../assets/images/virtual_card_lime.svg'
 
 const Dashboard = () => {
   const [showConfig, setShowConfig] = useState(false)
+  const [showCardCreation, setShowCardCreation] = useState(false)
 
   // Sample Data
   const dashboardData = {
@@ -162,7 +164,14 @@ const Dashboard = () => {
               <Button variant="outline" size="sm">
                 Invite Member
               </Button>
-              <Button variant="primary" size="sm">
+              <Button 
+                variant="primary" 
+                size="sm"
+                onClick={() => {
+                  console.log('New Card button clicked')
+                  setShowCardCreation(true)
+                }}
+              >
                 New Card
               </Button>
             </div>
@@ -560,6 +569,20 @@ const Dashboard = () => {
           </Card>
         </div>
       </div>
+
+      {/* Card Creation Flow Modal */}
+      {showCardCreation && (
+        <CardCreationFlow onClose={() => {
+          console.log('Closing Card Creation Flow')
+          setShowCardCreation(false)
+        }} />
+      )}
+      
+      {/* Debug info */}
+      {(() => {
+        console.log('showCardCreation state:', showCardCreation)
+        return null
+      })()}
     </div>
   )
 }

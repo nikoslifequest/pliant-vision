@@ -1,4 +1,5 @@
 import React from 'react'
+import { CaretDown } from 'phosphor-react'
 import { tokens } from './tokens'
 
 // Base component types
@@ -191,7 +192,7 @@ export const Input: React.FC<InputProps> = ({
     lg: 'px-5 py-3 text-lg'
   }
   
-  const baseStyles = 'w-full rounded-md border border-neutral-300 focus:border-neutral-500 focus:ring-1 focus:ring-neutral-500 transition-colors'
+  const baseStyles = 'w-full rounded-lg border border-pliant-sand/50 focus:border-pliant-blue focus:ring-2 focus:ring-pliant-blue focus:border-transparent transition-colors bg-white'
   const errorStyles = error ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''
   
   const classes = `${baseStyles} ${sizeStyles[size]} ${errorStyles} ${className}`
@@ -199,7 +200,7 @@ export const Input: React.FC<InputProps> = ({
   return (
     <div className="space-y-2">
       {label && (
-        <label className="block text-sm font-medium text-neutral-700">
+        <label className="block text-sm font-medium text-pliant-charcoal">
           {label}
         </label>
       )}
@@ -208,7 +209,61 @@ export const Input: React.FC<InputProps> = ({
         <p className="text-sm text-red-600">{error}</p>
       )}
       {hint && !error && (
-        <p className="text-sm text-neutral-500">{hint}</p>
+        <p className="text-sm text-pliant-charcoal/60">{hint}</p>
+      )}
+    </div>
+  )
+}
+
+// Select Component
+interface SelectProps extends Omit<React.SelectHTMLAttributes<HTMLSelectElement>, 'size'> {
+  label?: string
+  error?: string
+  hint?: string
+  size?: 'sm' | 'md' | 'lg'
+  children: React.ReactNode
+}
+
+export const Select: React.FC<SelectProps> = ({
+  label,
+  error,
+  hint,
+  size = 'md',
+  className = '',
+  children,
+  ...props
+}) => {
+  const sizeStyles = {
+    sm: 'px-3 py-1.5 pr-8 text-sm',
+    md: 'px-4 py-3 pr-10 text-base',
+    lg: 'px-5 py-4 pr-12 text-lg'
+  }
+  
+  const baseStyles = 'w-full rounded-lg border border-pliant-sand/50 focus:border-pliant-blue focus:ring-2 focus:ring-pliant-blue focus:border-transparent transition-colors bg-white appearance-none cursor-pointer'
+  const errorStyles = error ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''
+  
+  const classes = `${baseStyles} ${sizeStyles[size]} ${errorStyles} ${className}`
+  
+  return (
+    <div className="space-y-2">
+      {label && (
+        <label className="block text-sm font-medium text-pliant-charcoal">
+          {label}
+        </label>
+      )}
+      <div className="relative">
+        <select className={classes} {...props}>
+          {children}
+        </select>
+        <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+          <CaretDown size={16} className="text-pliant-charcoal/60" />
+        </div>
+      </div>
+      {error && (
+        <p className="text-sm text-red-600">{error}</p>
+      )}
+      {hint && !error && (
+        <p className="text-sm text-pliant-charcoal/60">{hint}</p>
       )}
     </div>
   )
