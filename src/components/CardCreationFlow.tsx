@@ -97,6 +97,7 @@ const CardCreationFlow: React.FC<CardCreationFlowProps> = ({ onClose }) => {
   ]
 
   const [newMerchantInput, setNewMerchantInput] = useState('')
+  const [newRegionInput, setNewRegionInput] = useState('')
 
   const nextStep = () => {
     if (currentStep < 5) setCurrentStep(currentStep + 1)
@@ -128,6 +129,18 @@ const CardCreationFlow: React.FC<CardCreationFlowProps> = ({ onClose }) => {
   const removeMerchant = (merchantName: string) => {
     const updatedArray = formData.merchants.filter(m => m !== merchantName)
     updateFormData('merchants', updatedArray)
+  }
+
+  const addRegion = (regionName: string) => {
+    if (regionName.trim() && !formData.regions.includes(regionName.trim())) {
+      const updatedArray = [...formData.regions, regionName.trim()]
+      updateFormData('regions', updatedArray)
+    }
+  }
+
+  const removeRegion = (regionName: string) => {
+    const updatedArray = formData.regions.filter(r => r !== regionName)
+    updateFormData('regions', updatedArray)
   }
 
   const renderStepContent = () => {
@@ -497,51 +510,92 @@ const CardCreationFlow: React.FC<CardCreationFlowProps> = ({ onClose }) => {
                 <div>
                   <h3 className="text-lg font-semibold text-pliant-charcoal mb-4">Location & ATM</h3>
                   <div className="space-y-4">
-                    <div>
-                      {/* Mode Selection */}
-                      <div className="mb-4">
-                        <div className="flex space-x-4">
-                          <label className="flex items-center space-x-2 cursor-pointer">
+                                          <div>
+                        {/* Mode Selection */}
+                        <div className="mb-4">
+                          <div className="flex space-x-4">
+                            <label className="flex items-center space-x-2 cursor-pointer">
+                              <input
+                                type="radio"
+                                name="regionsMode"
+                                checked={formData.regionsMode === 'allow'}
+                                onChange={() => updateFormData('regionsMode', 'allow')}
+                                className="w-4 h-4 text-pliant-blue border-gray-300 focus:ring-pliant-blue"
+                              />
+                              <span className="text-sm font-medium text-pliant-charcoal">Allow only selected regions</span>
+                            </label>
+                            <label className="flex items-center space-x-2 cursor-pointer">
+                              <input
+                                type="radio"
+                                name="regionsMode"
+                                checked={formData.regionsMode === 'block'}
+                                onChange={() => updateFormData('regionsMode', 'block')}
+                                className="w-4 h-4 text-pliant-red border-gray-300 focus:ring-pliant-red"
+                              />
+                              <span className="text-sm font-medium text-pliant-charcoal">Block selected regions</span>
+                            </label>
+                          </div>
+                        </div>
+
+                        {/* Input field to add new region */}
+                        <div className="mb-4">
+                          <div className="flex space-x-2">
                             <input
-                              type="radio"
-                              name="regionsMode"
-                              checked={formData.regionsMode === 'allow'}
-                              onChange={() => updateFormData('regionsMode', 'allow')}
-                              className="w-4 h-4 text-pliant-blue border-gray-300 focus:ring-pliant-blue"
+                              type="text"
+                              placeholder="Enter region name..."
+                              className={`flex-1 px-3 py-2 border border-pliant-sand/50 rounded-lg focus:ring-2 focus:border-transparent text-sm ${
+                                formData.regionsMode === 'allow' 
+                                  ? 'focus:ring-pliant-blue' 
+                                  : 'focus:ring-pliant-red'
+                              }`}
+                              value={newRegionInput}
+                              onChange={(e) => setNewRegionInput(e.target.value)}
+                              onKeyPress={(e) => {
+                                if (e.key === 'Enter') {
+                                  addRegion(newRegionInput)
+                                  setNewRegionInput('')
+                                }
+                              }}
                             />
-                            <span className="text-sm font-medium text-pliant-charcoal">Allow only selected regions</span>
-                          </label>
-                          <label className="flex items-center space-x-2 cursor-pointer">
-                            <input
-                              type="radio"
-                              name="regionsMode"
-                              checked={formData.regionsMode === 'block'}
-                              onChange={() => updateFormData('regionsMode', 'block')}
-                              className="w-4 h-4 text-pliant-red border-gray-300 focus:ring-pliant-red"
-                            />
-                            <span className="text-sm font-medium text-pliant-charcoal">Block selected regions</span>
-                          </label>
+                            <Button
+                              size="sm"
+                              variant={formData.regionsMode === 'allow' ? 'primary' : 'secondary'}
+                              onClick={() => {
+                                addRegion(newRegionInput)
+                                setNewRegionInput('')
+                              }}
+                              disabled={!newRegionInput.trim()}
+                            >
+                              Add
+                            </Button>
+                          </div>
+                        </div>
+
+                        {/* List of regions */}
+                        <div className="space-y-2 max-h-32 overflow-y-auto">
+                          {formData.regions.map((region) => (
+                            <div key={region} className={`flex items-center justify-between p-2 rounded-lg border ${
+                              formData.regionsMode === 'allow' 
+                                ? 'bg-pliant-blue/5 border-pliant-blue/20' 
+                                : 'bg-pliant-red/5 border-pliant-red/20'
+                            }`}>
+                              <span className="text-sm text-pliant-charcoal">{region}</span>
+                              <button
+                                type="button"
+                                onClick={() => removeRegion(region)}
+                                className="text-pliant-charcoal/40 hover:text-pliant-red transition-colors"
+                              >
+                                <X size={16} />
+                              </button>
+                            </div>
+                          ))}
+                          {formData.regions.length === 0 && (
+                            <p className="text-sm text-pliant-charcoal/40 italic">
+                              No regions {formData.regionsMode === 'allow' ? 'allowed' : 'blocked'} yet
+                            </p>
+                          )}
                         </div>
                       </div>
-
-                      <div className="space-y-2">
-                        {['Germany', 'Europe', 'North America', 'Asia', 'Worldwide'].map((region) => (
-                          <label key={region} className="flex items-center space-x-2 cursor-pointer">
-                            <input
-                              type="checkbox"
-                              checked={formData.regions.includes(region)}
-                              onChange={() => toggleArrayItem('regions', region)}
-                              className={`w-4 h-4 border-gray-300 rounded ${
-                                formData.regionsMode === 'allow' 
-                                  ? 'text-pliant-blue focus:ring-pliant-blue' 
-                                  : 'text-pliant-red focus:ring-pliant-red'
-                              }`}
-                            />
-                            <span className="text-sm text-pliant-charcoal">{region}</span>
-                          </label>
-                        ))}
-                      </div>
-                    </div>
                     <div>
                       <label className="flex items-center space-x-3 cursor-pointer">
                         <input
