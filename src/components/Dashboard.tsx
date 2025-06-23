@@ -141,9 +141,9 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="min-h-full bg-neutral-50">
+    <div className="min-h-full bg-white">
       {/* Header */}
-      <div className="bg-white border-b border-pliant-sand/30">
+      <div className="bg-white">
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex items-center justify-between h-[100px]">
             <div>
