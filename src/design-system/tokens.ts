@@ -1,83 +1,98 @@
 // Design Tokens for PliantCard Platform
-// Following design system best practices
+// Inspired by Mercury.com's clean, minimal design aesthetic
 
 export const tokens = {
-  // Color System
+  // Color System - Mercury-inspired palette
   colors: {
-    // Brand Colors
+    // Brand Colors - More subtle and refined
     brand: {
       primary: {
-        50: '#f8f8f8',
-        100: '#f0f0f0',
-        200: '#e0e0e0',
-        300: '#c0c0c0',
-        400: '#a0a0a0',
-        500: '#808080',
-        600: '#5a5856',
-        700: '#403d3c',
-        800: '#2a2625',
-        900: '#201C1C',
+        50: '#f9fafa',
+        100: '#f3f4f4',
+        200: '#e7e9e9',
+        300: '#d1d6d6',
+        400: '#a5b2b2',
+        500: '#19242A', // Pliant Charcoal as primary color
+        600: '#171F25',
+        700: '#141B20',
+        800: '#11171B',
+        900: '#0E1316',
       },
       secondary: {
-        50: '#fdfff4',
-        100: '#fbffe8',
-        200: '#f7ffc6',
-        300: '#f1ff9f',
-        400: '#e8ff6b',
-        500: '#E6FF52',
-        600: '#d4e83f',
-        700: '#bfcc2d',
-        800: '#9ea021',
-        900: '#82851e',
+        50: '#fdf6f7',
+        100: '#FCE7E9',
+        200: '#FFD5DA',
+        300: '#FFA8B1',
+        400: '#FF8D98',
+        500: '#FF727E', // Pliant Red
+        600: '#E66771',
+        700: '#CC5B64',
+        800: '#B35058',
+        900: '#99444B',
+      },
+      // Mercury-style accent colors
+      accent: {
+        blue: '#A5C3C3',
+        sand: '#E4D7CF',
+        orange: '#FFA070',
+        lime: '#E6FF52',
       }
     },
     
-    // Semantic Colors
+    // Semantic Colors - More muted
     semantic: {
       success: {
         50: '#f0fdf4',
+        100: '#dcfce7',
         500: '#22c55e',
         600: '#16a34a',
+        700: '#15803d',
       },
       warning: {
         50: '#fffbeb',
+        100: '#fef3c7',
         500: '#f59e0b',
         600: '#d97706',
+        700: '#b45309',
       },
       error: {
         50: '#fef2f2',
+        100: '#fee2e2',
         500: '#ef4444',
         600: '#dc2626',
+        700: '#b91c1c',
       },
       info: {
         50: '#eff6ff',
+        100: '#dbeafe',
         500: '#3b82f6',
         600: '#2563eb',
+        700: '#1d4ed8',
       }
     },
     
-    // Neutral Colors
+    // Neutral Colors - Mercury-style grays
     neutral: {
       white: '#ffffff',
-      50: '#f9fafb',
-      100: '#f3f4f6',
-      200: '#e5e7eb',
-      300: '#d1d5db',
-      400: '#9ca3af',
-      500: '#6b7280',
-      600: '#4b5563',
-      700: '#374151',
-      800: '#1f2937',
-      900: '#111827',
+      50: '#fafafa',
+      100: '#f5f5f5',
+      200: '#e5e5e5',
+      300: '#d4d4d4',
+      400: '#a3a3a3',
+      500: '#737373',
+      600: '#525252',
+      700: '#404040',
+      800: '#262626',
+      900: '#171717',
       black: '#000000',
     }
   },
 
-  // Typography System
+  // Typography System - Mercury-inspired
   typography: {
     fontFamily: {
-      primary: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-      mono: '"JetBrains Mono", "Fira Code", monospace',
+      primary: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+      mono: '"SF Mono", Monaco, "Cascadia Code", "Roboto Mono", Consolas, monospace',
     },
     fontSize: {
       xs: '0.75rem',      // 12px
@@ -105,7 +120,7 @@ export const tokens = {
     }
   },
 
-  // Spacing System (8px grid)
+  // Spacing System - Mercury's generous spacing
   spacing: {
     0: '0',
     1: '0.25rem',   // 4px
@@ -114,44 +129,45 @@ export const tokens = {
     4: '1rem',      // 16px
     5: '1.25rem',   // 20px
     6: '1.5rem',    // 24px
+    7: '1.75rem',   // 28px
     8: '2rem',      // 32px
     10: '2.5rem',   // 40px
     12: '3rem',     // 48px
     16: '4rem',     // 64px
     20: '5rem',     // 80px
     24: '6rem',     // 96px
+    32: '8rem',     // 128px
   },
 
-  // Border Radius
+  // Border Radius - More subtle
   borderRadius: {
     none: '0',
     sm: '0.125rem',   // 2px
-    base: '0.25rem',  // 4px
-    md: '0.375rem',   // 6px
-    lg: '0.5rem',     // 8px
-    xl: '0.75rem',    // 12px
-    '2xl': '1rem',    // 16px
-    '3xl': '1.5rem',  // 24px
+    base: '0.375rem', // 6px - Mercury's preferred radius
+    md: '0.5rem',     // 8px
+    lg: '0.75rem',    // 12px
+    xl: '1rem',       // 16px
+    '2xl': '1.5rem',  // 24px
     full: '9999px',
   },
 
-  // Shadows
+  // Shadows - Mercury-style subtle shadows
   shadows: {
     none: 'none',
-    sm: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
-    base: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
-    md: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
-    lg: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
-    xl: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
-    '2xl': '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
-    inner: 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.06)',
+    xs: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
+    sm: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1)',
+    base: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1)',
+    md: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1)',
+    lg: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)',
+    xl: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+    inner: 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.05)',
     
-    // Special Effects
-    glow: '0 0 5px #E6FF52, 0 0 10px #E6FF52, 0 0 15px #E6FF52',
-    glowSubtle: '0 0 3px rgba(230, 255, 82, 0.3), 0 0 6px rgba(230, 255, 82, 0.2)',
+    // Card shadows - Mercury style
+    card: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1)',
+    cardHover: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1)',
   },
 
-  // Animation System
+  // Animation System - Smooth and refined
   animation: {
     duration: {
       fast: '150ms',
@@ -165,7 +181,7 @@ export const tokens = {
       easeIn: 'cubic-bezier(0.4, 0, 1, 1)',
       easeOut: 'cubic-bezier(0, 0, 0.2, 1)',
       easeInOut: 'cubic-bezier(0.4, 0, 0.2, 1)',
-      bounce: 'cubic-bezier(0.68, -0.55, 0.265, 1.55)',
+      mercury: 'cubic-bezier(0.4, 0, 0.2, 1)', // Mercury's preferred easing
     }
   },
 

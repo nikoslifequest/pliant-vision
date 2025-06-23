@@ -1,5 +1,5 @@
 /** @type {import('tailwindcss').Config} */
-module.exports = {
+export default {
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
@@ -7,60 +7,81 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        // Mercury-inspired neutral palette
+        neutral: {
+          50: '#fafafa',
+          100: '#f5f5f5',
+          200: '#e5e5e5',
+          300: '#d4d4d4',
+          400: '#a3a3a3',
+          500: '#737373',
+          600: '#525252',
+          700: '#404040',
+          800: '#262626',
+          900: '#171717',
+        },
+        // Brand colors
         primary: {
-          50: '#f8f8f8',
-          100: '#f0f0f0',
-          200: '#e0e0e0',
-          300: '#c0c0c0',
-          400: '#a0a0a0',
-          500: '#808080',
-          600: '#5a5856',
-          700: '#403d3c',
-          800: '#2a2625',
-          900: '#201C1C',
+          50: '#fafafa',
+          100: '#f5f5f5',
+          200: '#e5e5e5',
+          300: '#d4d4d4',
+          400: '#a3a3a3',
+          500: '#737373',
+          600: '#525252',
+          700: '#404040',
+          800: '#262626',
+          900: '#171717',
         },
         secondary: {
-          50: '#fdfff4',
-          100: '#fbffe8',
-          200: '#f7ffc6',
-          300: '#f1ff9f',
-          400: '#e8ff6b',
-          500: '#E6FF52',
-          600: '#d4e83f',
-          700: '#bfcc2d',
-          800: '#9ea021',
-          900: '#82851e',
+          50: '#fefce8',
+          100: '#fef9c3',
+          200: '#fef08a',
+          300: '#fde047',
+          400: '#facc15',
+          500: '#eab308',
+          600: '#ca8a04',
+          700: '#a16207',
+          800: '#854d0e',
+          900: '#713f12',
         },
-        dark: {
-          100: '#1e1e1e',
-          200: '#161616',
-          300: '#0d0d0d',
+        // Mercury-style accent colors
+        accent: {
+          blue: '#3b82f6',
+          green: '#10b981',
+          purple: '#8b5cf6',
+          orange: '#f97316',
+        },
+        pliant: {
+          red: '#FF727E',
+          blue: '#A5C3C3',
+          sand: '#E4D7CF',
+          orange: '#FFA070',
+          lime: '#E6FF52',
+          charcoal: '#19242A'
         }
       },
       fontFamily: {
-        'sans': ['Inter', 'ui-sans-serif', 'system-ui'],
+        sans: ['-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Roboto', '"Helvetica Neue"', 'Arial', 'sans-serif'],
+        mono: ['"SF Mono"', 'Monaco', '"Cascadia Code"', '"Roboto Mono"', 'Consolas', 'monospace'],
       },
-      backgroundImage: {
-        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
-        'gradient-conic': 'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
+      boxShadow: {
+        'card': '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1)',
+        'cardHover': '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1)',
+      },
+      borderRadius: {
+        'base': '0.375rem', // 6px - Mercury's preferred radius
       },
       animation: {
-        'float': 'float 6s ease-in-out infinite',
-        'glow': 'glow 2s ease-in-out infinite alternate',
+        'mercury': 'mercury 300ms cubic-bezier(0.4, 0, 0.2, 1)',
       },
       keyframes: {
-        float: {
-          '0%, 100%': { transform: 'translateY(0px)' },
-          '50%': { transform: 'translateY(-20px)' },
-        },
-        glow: {
-          '0%': { boxShadow: '0 0 5px #E6FF52, 0 0 10px #E6FF52, 0 0 15px #E6FF52' },
-          '100%': { boxShadow: '0 0 10px #E6FF52, 0 0 20px #E6FF52, 0 0 30px #E6FF52' },
+        mercury: {
+          '0%': { transform: 'translateY(0px)' },
+          '100%': { transform: 'translateY(-2px)' },
         }
       }
     },
   },
-  plugins: [
-    require('@tailwindcss/forms'),
-  ],
+  plugins: [],
 } 

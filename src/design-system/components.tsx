@@ -7,7 +7,7 @@ interface BaseProps {
   className?: string
 }
 
-// Button Component System
+// Button Component System - Mercury-inspired
 interface ButtonProps extends BaseProps {
   variant?: 'primary' | 'secondary' | 'ghost' | 'outline'
   size?: 'sm' | 'md' | 'lg'
@@ -17,51 +17,43 @@ interface ButtonProps extends BaseProps {
   type?: 'button' | 'submit' | 'reset'
 }
 
-export const Button: React.FC<ButtonProps> = ({
-  children,
+export const Button = ({ 
+  children, 
   variant = 'primary',
   size = 'md',
-  disabled = false,
-  loading = false,
   className = '',
-  onClick,
-  type = 'button',
-  ...props
-}) => {
-  const baseStyles = 'inline-flex items-center justify-center font-medium rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed'
-  
-  const variantStyles = {
-    primary: 'bg-primary-900 text-secondary-500 hover:bg-primary-800 focus:ring-primary-500 shadow-md hover:shadow-lg hover:scale-[1.02]',
-    secondary: 'bg-secondary-500 text-primary-900 hover:bg-secondary-400 focus:ring-secondary-500 shadow-md hover:shadow-lg hover:scale-[1.02]',
-    ghost: 'text-neutral-700 hover:bg-neutral-100 focus:ring-neutral-500',
-    outline: 'border border-neutral-300 text-neutral-700 hover:bg-neutral-50 focus:ring-neutral-500'
+  ...props 
+}: ButtonProps) => {
+  const variants = {
+    primary: 'bg-pliant-charcoal text-white hover:bg-pliant-charcoal/90',
+    secondary: 'bg-pliant-blue text-white hover:bg-pliant-blue/90',
+    outline: 'border border-pliant-sand hover:bg-pliant-sand/5 text-pliant-charcoal',
+    ghost: 'text-pliant-charcoal/60 hover:text-pliant-charcoal hover:bg-pliant-sand/5',
   }
-  
-  const sizeStyles = {
+
+  const sizes = {
     sm: 'px-3 py-1.5 text-sm',
-    md: 'px-4 py-2 text-sm',
-    lg: 'px-6 py-3 text-base'
+    md: 'px-4 py-2',
+    lg: 'px-6 py-3',
   }
-  
-  const classes = `${baseStyles} ${variantStyles[variant]} ${sizeStyles[size]} ${className}`
-  
+
   return (
     <button
-      type={type}
-      className={classes}
-      disabled={disabled || loading}
-      onClick={onClick}
+      className={`
+        inline-flex items-center justify-center font-medium rounded-lg
+        transition-colors duration-200
+        ${variants[variant]}
+        ${sizes[size]}
+        ${className}
+      `}
       {...props}
     >
-      {loading ? (
-        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current mr-2" />
-      ) : null}
       {children}
     </button>
   )
 }
 
-// Card Component System
+// Card Component System - Mercury-inspired
 interface CardProps extends BaseProps {
   variant?: 'default' | 'elevated' | 'glass' | 'bordered'
   padding?: 'none' | 'sm' | 'md' | 'lg'
@@ -76,13 +68,13 @@ export const Card: React.FC<CardProps> = ({
   className = '',
   ...props
 }) => {
-  const baseStyles = 'rounded-lg transition-all duration-300'
+  const baseStyles = 'rounded-lg transition-all duration-200 bg-white'
   
   const variantStyles = {
-    default: 'bg-white border border-neutral-200',
-    elevated: 'bg-white shadow-lg border border-neutral-100',
+    default: 'border border-neutral-200',
+    elevated: 'shadow-md border border-neutral-100',
     glass: 'bg-white/95 backdrop-blur-sm border border-white/20 shadow-lg',
-    bordered: 'bg-white border-2 border-neutral-200'
+    bordered: 'border-2 border-neutral-200'
   }
   
   const paddingStyles = {
@@ -92,7 +84,7 @@ export const Card: React.FC<CardProps> = ({
     lg: 'p-8'
   }
   
-  const hoverStyles = hoverable ? 'hover:shadow-xl hover:-translate-y-1 cursor-pointer' : ''
+  const hoverStyles = hoverable ? 'hover:shadow-md hover:-translate-y-0.5 cursor-pointer' : ''
   
   const classes = `${baseStyles} ${variantStyles[variant]} ${paddingStyles[padding]} ${hoverStyles} ${className}`
   
@@ -121,7 +113,7 @@ export const Badge: React.FC<BadgeProps> = ({
   const baseStyles = 'inline-flex items-center font-medium rounded-full'
   
   const variantStyles = {
-    default: 'bg-neutral-200 text-neutral-800',
+    default: 'bg-neutral-100 text-neutral-800',
     success: 'bg-green-100 text-green-800',
     warning: 'bg-yellow-100 text-yellow-800',
     error: 'bg-red-100 text-red-800',
@@ -145,7 +137,7 @@ export const Badge: React.FC<BadgeProps> = ({
   )
 }
 
-// Status Dot Component
+// Status Dot Component - Mercury-style
 interface StatusDotProps {
   variant?: 'online' | 'offline' | 'busy' | 'away'
   size?: 'sm' | 'md' | 'lg'
@@ -158,7 +150,7 @@ export const StatusDot: React.FC<StatusDotProps> = ({
   pulse = false
 }) => {
   const variantStyles = {
-    online: 'bg-secondary-500',
+    online: 'bg-green-500',
     offline: 'bg-neutral-400',
     busy: 'bg-red-500',
     away: 'bg-yellow-500'
@@ -199,7 +191,7 @@ export const Input: React.FC<InputProps> = ({
     lg: 'px-5 py-3 text-lg'
   }
   
-  const baseStyles = 'w-full rounded-lg border border-neutral-300 focus:border-primary-500 focus:ring-1 focus:ring-primary-500 transition-colors'
+  const baseStyles = 'w-full rounded-md border border-neutral-300 focus:border-neutral-500 focus:ring-1 focus:ring-neutral-500 transition-colors'
   const errorStyles = error ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''
   
   const classes = `${baseStyles} ${sizeStyles[size]} ${errorStyles} ${className}`
@@ -240,11 +232,11 @@ export const IconButton: React.FC<IconButtonProps> = ({
   onClick,
   ...props
 }) => {
-  const baseStyles = 'inline-flex items-center justify-center rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed'
+  const baseStyles = 'inline-flex items-center justify-center rounded-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed'
   
   const variantStyles = {
-    primary: 'bg-primary-900 text-secondary-500 hover:bg-primary-800 focus:ring-primary-500',
-    secondary: 'bg-secondary-100 text-secondary-700 hover:bg-secondary-200 focus:ring-secondary-500',
+    primary: 'bg-neutral-900 text-white hover:bg-neutral-800 focus:ring-neutral-500',
+    secondary: 'bg-neutral-100 text-neutral-700 hover:bg-neutral-200 focus:ring-neutral-500',
     ghost: 'text-neutral-600 hover:bg-neutral-100 focus:ring-neutral-500'
   }
   
@@ -269,7 +261,7 @@ export const IconButton: React.FC<IconButtonProps> = ({
   )
 }
 
-// Quick Action Item Component
+// Quick Action Item Component - Mercury-style
 interface QuickActionProps extends BaseProps {
   icon: React.ReactNode
   title: string
@@ -288,14 +280,14 @@ export const QuickAction: React.FC<QuickActionProps> = ({
   return (
     <button
       onClick={onClick}
-      className={`w-full text-left px-4 py-3 rounded-lg hover:bg-neutral-50 transition-colors flex items-center space-x-3 group ${className}`}
+      className={`w-full text-left px-4 py-3 rounded-md hover:bg-neutral-50 transition-colors flex items-center space-x-3 group ${className}`}
       {...props}
     >
-      <div className="w-8 h-8 bg-primary-100 rounded-lg flex items-center justify-center group-hover:bg-primary-200 transition-colors">
+      <div className="w-10 h-10 bg-neutral-100 rounded-full flex items-center justify-center group-hover:bg-neutral-200 transition-colors">
         {icon}
       </div>
       <div className="flex-1">
-        <span className="text-neutral-700 font-medium block">{title}</span>
+        <span className="text-neutral-900 font-medium block">{title}</span>
         {description && (
           <span className="text-neutral-500 text-sm">{description}</span>
         )}
@@ -304,7 +296,7 @@ export const QuickAction: React.FC<QuickActionProps> = ({
   )
 }
 
-// Credit Card Component
+// Credit Card Component - Mercury-style
 interface CreditCardProps {
   name: string
   last4: string
@@ -328,12 +320,12 @@ export const CreditCard: React.FC<CreditCardProps> = ({
       className="flex items-center justify-between p-4 rounded-lg border border-neutral-200 hover:border-neutral-300 transition-colors cursor-pointer group"
     >
       <div className="flex items-center space-x-4">
-        <div className={`w-12 h-8 rounded bg-gradient-to-br ${gradient} flex items-center justify-center group-hover:shadow-md transition-shadow`}>
-          <div className="w-3 h-2 bg-gradient-to-br from-secondary-400 to-secondary-500 rounded-sm"></div>
+        <div className={`w-12 h-8 rounded bg-gradient-to-r ${gradient} flex items-center justify-center group-hover:shadow-sm transition-shadow`}>
+          <div className="w-3 h-2 bg-white/80 rounded-sm"></div>
         </div>
         <div>
           <p className="font-medium text-neutral-900">{name}</p>
-          <p className="text-sm text-neutral-500">**** **** **** {last4}</p>
+          <p className="text-sm text-neutral-500 font-mono">•••• •••• •••• {last4}</p>
         </div>
       </div>
       <div className="text-right">
@@ -344,7 +336,7 @@ export const CreditCard: React.FC<CreditCardProps> = ({
   )
 }
 
-// Transaction Item Component
+// Transaction Item Component - Mercury-style
 interface TransactionProps {
   merchant: string
   category: string
@@ -364,8 +356,8 @@ export const Transaction: React.FC<TransactionProps> = ({
     <div className="px-6 py-4 hover:bg-neutral-50 transition-colors">
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-3">
-          <div className="w-8 h-8 bg-neutral-100 rounded-lg flex items-center justify-center">
-            <span className="text-sm font-medium text-neutral-600">
+          <div className="w-10 h-10 bg-neutral-100 rounded-full flex items-center justify-center">
+            <span className="text-sm font-semibold text-neutral-600">
               {merchant.charAt(0)}
             </span>
           </div>
@@ -375,7 +367,7 @@ export const Transaction: React.FC<TransactionProps> = ({
           </div>
         </div>
         <div className="text-right">
-          <p className={`font-semibold ${isPositive ? 'text-secondary-600' : 'text-neutral-900'}`}>
+          <p className={`font-semibold ${isPositive ? 'text-green-600' : 'text-neutral-900'}`}>
             {amount}
           </p>
         </div>
