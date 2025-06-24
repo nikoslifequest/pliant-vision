@@ -49,6 +49,25 @@ const Dashboard = () => {
       { name: 'CHF Account', balance: 0.00, icon: Money },
       { name: 'GBP Account', balance: 0.00, icon: Money }
     ],
+    co2Data: {
+      compensated: 216.25,
+      totalEmissions: 407.85,
+      travelEmissions: 407.85,
+      compensationPercentage: 53
+    },
+    cashback: {
+      totalEarned: 35074,
+      thisMonth: 2847,
+      lastMonth: 3156,
+      available: 8290
+    },
+    accountExport: {
+      missingReceipts: 17,
+      daysLeft: 8,
+      progress: 73,
+      readyTransactions: 156,
+      readyAmount: 24750
+    },
     creditCard: {
       balance: 12505.87,
       available: 21249,
@@ -287,13 +306,13 @@ const Dashboard = () => {
         {/* Second Row: Credit Card, Bill Pay, Invoicing - Full Width */}
         <div className="grid grid-cols-3 gap-6 mb-8">
           
-          {/* Credit Card */}
+          {/* CO2 Compensation */}
           <Card className="p-6 shadow-card">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="font-medium text-pliant-charcoal">Credit Card</h3>
+              <h3 className="font-medium text-pliant-charcoal">CO₂ Compensation</h3>
               <div className="flex items-center space-x-1">
                 <Button variant="ghost" size="sm">
-                  <CreditCardIcon size={16} />
+                  <Info size={16} />
                 </Button>
                 <Button variant="ghost" size="sm">
                   <DotsThree size={16} />
@@ -301,44 +320,48 @@ const Dashboard = () => {
               </div>
             </div>
             
-            <div className="text-2xl font-bold text-pliant-charcoal mb-4">
-              ${dashboardData.creditCard.balance.toLocaleString()}
+            <div className="flex items-center space-x-2 mb-4">
+              <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center">
+                <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+              </div>
+              <div className="text-2xl font-bold text-pliant-charcoal">
+                {dashboardData.co2Data.compensated.toFixed(2)} t
+              </div>
             </div>
 
             <div className="text-sm text-pliant-charcoal/60 mb-3">
-              Balance vs Available
+              {dashboardData.co2Data.compensationPercentage}% compensated
             </div>
-            <div className="bg-gray-200 rounded-full h-2 mb-3">
+            <div className="bg-gray-200 rounded-full h-2 mb-4">
               <div 
                 className="bg-pliant-blue h-2 rounded-full" 
-                style={{ width: `${dashboardData.creditCard.utilization}%` }}
+                style={{ width: `${dashboardData.co2Data.compensationPercentage}%` }}
               ></div>
-            </div>
-            <div className="text-sm text-pliant-charcoal/60 mb-4">
-              Pending • ${dashboardData.creditCard.available.toLocaleString()} available
             </div>
 
             <div className="flex items-center justify-between pt-4 border-t border-pliant-sand/30">
-              <div className="flex items-center space-x-2 text-sm text-pliant-charcoal/60">
-                <div className="w-3 h-3 rounded bg-pliant-blue/20 flex items-center justify-center">
-                  <div className="w-1.5 h-1.5 bg-pliant-blue rounded"></div>
-                </div>
-                <span>Autopay</span>
-              </div>
               <div className="flex items-center space-x-2">
-                <span className="text-sm text-pliant-charcoal font-medium">{dashboardData.creditCard.autopayDate}</span>
-                <Button variant="primary" size="sm">Pay</Button>
+                <div className="w-4 h-4 bg-gray-100 rounded flex items-center justify-center">
+                  <span className="text-xs">✈️</span>
+                </div>
+                <div>
+                  <div className="text-sm font-medium text-pliant-charcoal">Travel CO₂</div>
+                  <div className="text-xs text-pliant-charcoal/60">{dashboardData.co2Data.totalEmissions.toFixed(2)} t total</div>
+                </div>
+              </div>
+              <div className="text-lg font-semibold text-pliant-charcoal">
+                {dashboardData.co2Data.travelEmissions.toFixed(2)} t
               </div>
             </div>
           </Card>
 
-          {/* Bill Pay */}
+          {/* Cashback */}
           <Card className="p-6 shadow-card">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="font-medium text-pliant-charcoal">Bill Pay</h3>
+              <h3 className="font-medium text-pliant-charcoal">Cashback</h3>
               <div className="flex items-center space-x-1">
                 <Button variant="ghost" size="sm">
-                  <Plus size={16} />
+                  <Info size={16} />
                 </Button>
                 <Button variant="ghost" size="sm">
                   <DotsThree size={16} />
@@ -346,41 +369,53 @@ const Dashboard = () => {
               </div>
             </div>
 
-            <div className="grid grid-cols-3 gap-3 mb-6">
-              <div className="text-center">
-                <div className="text-xl font-bold text-pliant-charcoal">{dashboardData.billPay.outstanding}</div>
-                <div className="text-xs text-pliant-charcoal/60">Outstanding</div>
+            <div className="flex items-center space-x-2 mb-4">
+              <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center">
+                <span className="text-green-600 text-xs font-bold">€</span>
               </div>
-              <div className="text-center">
-                <div className="text-xl font-bold text-pliant-red">{dashboardData.billPay.overdue}</div>
-                <div className="text-xs text-pliant-charcoal/60">Overdue</div>
+              <div className="text-2xl font-bold text-pliant-charcoal">
+                €{dashboardData.cashback.totalEarned.toLocaleString()}
               </div>
-              <div className="text-center">
-                <div className="text-xl font-bold text-pliant-charcoal">-</div>
-                <div className="text-xs text-pliant-charcoal/60">Due soon</div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4 mb-4">
+              <div>
+                <div className="text-sm text-pliant-charcoal/60 mb-1">This Month</div>
+                <div className="text-lg font-semibold text-green-600">
+                  €{dashboardData.cashback.thisMonth.toLocaleString()}
+                </div>
+              </div>
+              <div>
+                <div className="text-sm text-pliant-charcoal/60 mb-1">Last Month</div>
+                <div className="text-lg font-semibold text-pliant-charcoal">
+                  €{dashboardData.cashback.lastMonth.toLocaleString()}
+                </div>
               </div>
             </div>
 
             <div className="pt-4 border-t border-pliant-sand/30">
               <div className="flex items-center justify-between">
                 <div>
-                  <div className="text-sm font-medium text-pliant-charcoal">Inbox</div>
-                  <div className="text-sm text-pliant-charcoal/60">{dashboardData.billPay.inbox} bills</div>
+                  <div className="text-sm font-medium text-pliant-charcoal">Available</div>
+                  <div className="text-sm text-pliant-charcoal/60">Ready to redeem</div>
                 </div>
-                <Button variant="ghost" size="sm">
-                  View <ArrowUp size={14} className="ml-1 rotate-45" />
-                </Button>
+                <div className="flex items-center space-x-2">
+                  <span className="text-sm font-semibold text-pliant-charcoal">
+                    €{dashboardData.cashback.available.toLocaleString()}
+                  </span>
+                  <Button variant="primary" size="sm">Redeem</Button>
+                </div>
               </div>
             </div>
           </Card>
 
-          {/* Invoicing */}
+          {/* Account Export */}
           <Card className="p-6 shadow-card">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="font-medium text-pliant-charcoal">Invoicing</h3>
+              <h3 className="font-medium text-pliant-charcoal">Account Export</h3>
               <div className="flex items-center space-x-1">
                 <Button variant="ghost" size="sm">
-                  <Plus size={16} />
+                  <Info size={16} />
                 </Button>
                 <Button variant="ghost" size="sm">
                   <DotsThree size={16} />
@@ -390,25 +425,38 @@ const Dashboard = () => {
 
             <div className="grid grid-cols-2 gap-4 mb-6">
               <div className="text-center">
-                <div className="text-xl font-bold text-pliant-red">{dashboardData.invoicing.overdue.count}</div>
-                <div className="text-xs text-pliant-charcoal/60">Overdue</div>
-                <div className="text-xs text-pliant-red">${dashboardData.invoicing.overdue.amount}</div>
+                <div className="text-xl font-bold text-pliant-red">{dashboardData.accountExport.missingReceipts}</div>
+                <div className="text-xs text-pliant-charcoal/60">Missing</div>
+                <div className="text-xs text-pliant-red">Receipts</div>
               </div>
               <div className="text-center">
-                <div className="text-xl font-bold text-green-600">{dashboardData.invoicing.paid.count}</div>
-                <div className="text-xs text-pliant-charcoal/60">Paid</div>
-                <div className="text-xs text-green-600">${dashboardData.invoicing.paid.amount}K</div>
+                <div className="text-xl font-bold text-orange-600">{dashboardData.accountExport.daysLeft}</div>
+                <div className="text-xs text-pliant-charcoal/60">Days left</div>
+                <div className="text-xs text-orange-600">Until deadline</div>
+              </div>
+            </div>
+
+            <div className="mb-4">
+              <div className="flex items-center justify-between text-sm mb-2">
+                <span className="text-pliant-charcoal/60">Export Progress</span>
+                <span className="text-pliant-charcoal/60">{dashboardData.accountExport.progress}%</span>
+              </div>
+              <div className="bg-gray-200 rounded-full h-2">
+                <div 
+                  className="bg-pliant-blue h-2 rounded-full" 
+                  style={{ width: `${dashboardData.accountExport.progress}%` }}
+                ></div>
               </div>
             </div>
 
             <div className="pt-4 border-t border-pliant-sand/30">
               <div className="flex items-center justify-between">
                 <div>
-                  <div className="text-sm font-medium text-pliant-charcoal">Open</div>
-                  <div className="text-sm text-pliant-charcoal/60">{dashboardData.invoicing.open.count} invoices • ${dashboardData.invoicing.open.amount.toLocaleString()}</div>
+                  <div className="text-sm font-medium text-pliant-charcoal">Ready</div>
+                  <div className="text-sm text-pliant-charcoal/60">{dashboardData.accountExport.readyTransactions} transactions • {dashboardData.accountExport.readyAmount}€</div>
                 </div>
-                <Button variant="ghost" size="sm">
-                  View <ArrowUp size={14} className="ml-1 rotate-45" />
+                <Button variant="primary" size="sm">
+                  Export
                 </Button>
               </div>
             </div>
