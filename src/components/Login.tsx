@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react'
 import { Eye, EyeSlash } from 'phosphor-react'
 import { Button, Input } from '../design-system'
 import pliantLogo from '../assets/images/pliantlogo.svg'
+import Lottie from 'lottie-react'
+import cardsAnimation from '../assets/lottie/CardsInOut.json'
 
 interface LoginProps {
   onLogin: () => void
@@ -10,6 +12,7 @@ interface LoginProps {
 const Login = ({ onLogin }: LoginProps) => {
   const [showWelcome, setShowWelcome] = useState(true)
   const [showLoginForm, setShowLoginForm] = useState(false)
+  const [showLoadingAnimation, setShowLoadingAnimation] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -33,19 +36,26 @@ const Login = ({ onLogin }: LoginProps) => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     console.log('Login attempt:', { email, password })
-    // Simulate successful login
-    onLogin()
+    
+    // Show loading animation
+    setShowLoginForm(false)
+    setShowLoadingAnimation(true)
+    
+    // After animation completes, go to dashboard
+    setTimeout(() => {
+      onLogin()
+    }, 3000) // Wait for animation to complete
   }
 
   return (
     <div className="min-h-screen bg-white flex flex-col items-center justify-center px-4">
-      {/* Welcome Animation */}
+      {/* Welcome Text Only */}
       <div className={`absolute inset-0 flex items-center justify-center transition-all duration-1000 ${
         showWelcome 
           ? 'opacity-100 translate-y-0' 
           : 'opacity-0 -translate-y-8'
       }`}>
-        <h1 className="text-4xl font-light text-pliant-charcoal tracking-wide animate-fade-in-up">
+        <h1 className="text-4xl font-semibold text-pliant-charcoal tracking-normal animate-fade-in-up">
           Welcome to Pliant
         </h1>
       </div>
@@ -174,6 +184,20 @@ const Login = ({ onLogin }: LoginProps) => {
         </div>
 
       </div>
+
+      {/* Loading Animation Screen */}
+      {showLoadingAnimation && (
+        <div className="absolute inset-0 flex items-center justify-center bg-white transition-all duration-1000 opacity-100">
+          <div className="w-80 h-80">
+            <Lottie 
+              animationData={cardsAnimation} 
+              loop={false}
+              autoplay={true}
+              className="w-full h-full"
+            />
+          </div>
+        </div>
+      )}
     </div>
   )
 }
