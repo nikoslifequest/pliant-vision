@@ -28,10 +28,18 @@ const Sidebar = () => {
 
   return (
     <div className="w-64 bg-white border-r border-pliant-sand/30 h-screen fixed left-0 top-0 flex flex-col">
-      {/* Logo */}
-      <div className="h-[100px] px-6 flex flex-col justify-center items-start border-b border-pliant-sand/30">
-        <img src={pliantLogo} alt="Pliant" className="h-8 w-auto" />
-        <p className="text-xs text-pliant-charcoal/60 mt-1">Admin App</p>
+      {/* User Profile */}
+      <div className="p-4 border-b border-pliant-sand/30">
+        <div className="flex items-center space-x-3 rounded-lg hover:bg-pliant-sand/5 transition-colors cursor-pointer">
+          <div className="w-8 h-8 bg-pliant-blue rounded-full flex items-center justify-center">
+            <span className="text-white font-semibold text-sm">AM</span>
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-medium text-pliant-charcoal truncate">Alex Miller</p>
+            <p className="text-xs text-pliant-charcoal/60 truncate">alex@company.com</p>
+          </div>
+          <CaretDown size={16} className="text-pliant-charcoal/40" />
+        </div>
       </div>
 
       {/* Navigation */}
@@ -75,18 +83,10 @@ const Sidebar = () => {
         </div>
       </nav>
 
-      {/* User Profile */}
-      <div className="p-4 border-t border-pliant-sand/30">
-        <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-pliant-sand/5 transition-colors cursor-pointer">
-          <div className="w-8 h-8 bg-pliant-blue rounded-full flex items-center justify-center">
-            <span className="text-white font-semibold text-sm">AM</span>
-          </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-pliant-charcoal truncate">Alex Miller</p>
-            <p className="text-xs text-pliant-charcoal/60 truncate">alex@company.com</p>
-          </div>
-          <CaretDown size={16} className="text-pliant-charcoal/40" />
-        </div>
+      {/* Logo */}
+      <div className="h-[100px] px-6 flex flex-col justify-center items-start border-t border-pliant-sand/30">
+        <img src={pliantLogo} alt="Pliant" className="h-8 w-auto" />
+        <p className="text-xs text-pliant-charcoal/60 mt-1">Admin App</p>
       </div>
     </div>
   )
