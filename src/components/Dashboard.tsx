@@ -463,9 +463,8 @@ const Dashboard = () => {
           </Card>
         </div>
 
-        {/* Third Row: Money Movement and Transactions - Full Width */}
-        <div className="grid grid-cols-2 gap-6">
-          {/* Money Movement */}
+        {/* Third Row: Money Movement - Full Width */}
+        <div className="mb-6">
           <Card className="p-6 shadow-card">
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center space-x-2">
@@ -561,8 +560,10 @@ const Dashboard = () => {
               </div>
             </div>
           </Card>
+        </div>
 
-          {/* Transactions */}
+        {/* Fourth Row: Transactions - Full Width */}
+        <div className="mb-6">
           <Card className="p-6 shadow-card">
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-lg font-semibold text-pliant-charcoal">Transactions</h3>
