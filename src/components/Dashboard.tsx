@@ -24,6 +24,7 @@ import {
   Bank
 } from 'phosphor-react'
 import { Card, Button } from '../design-system'
+import PageHeader from './PageHeader'
 
 // Import card assets
 import physicalCardCharcoal from '../assets/images/physical_card_charcoal.svg'
@@ -166,39 +167,35 @@ const Dashboard = () => {
   return (
     <div className="min-h-full bg-white">
       {/* Header */}
-      <div className="bg-white">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="flex items-center justify-between h-[100px]">
-            <div>
-              <h1 className="text-2xl font-semibold text-pliant-charcoal mb-1">Dashboard</h1>
-              <p className="text-pliant-charcoal/60">Welcome back, Alex</p>
-            </div>
-            <div className="flex items-center space-x-3">
-              <Button 
-                variant="ghost" 
-                size="sm"
-                onClick={() => setShowConfig(!showConfig)}
-              >
-                <Gear size={16} className="mr-2" />
-                Configure
-              </Button>
-              <Button variant="outline" size="sm">
-                Invite Member
-              </Button>
-              <Button 
-                variant="primary" 
-                size="sm"
-                onClick={() => {
-                  console.log('New Card button clicked')
-                  setShowCardCreation(true)
-                }}
-              >
-                New Card
-              </Button>
-            </div>
-          </div>
-        </div>
-      </div>
+      <PageHeader 
+        title="Dashboard" 
+        subtitle="Welcome back, Alex"
+        actions={
+          <>
+            <Button 
+              variant="ghost" 
+              size="sm"
+              onClick={() => setShowConfig(!showConfig)}
+            >
+              <Gear size={16} className="mr-2" />
+              Configure
+            </Button>
+            <Button variant="outline" size="sm">
+              Invite Member
+            </Button>
+            <Button 
+              variant="primary" 
+              size="sm"
+              onClick={() => {
+                console.log('New Card button clicked')
+                setShowCardCreation(true)
+              }}
+            >
+              New Card
+            </Button>
+          </>
+        }
+      />
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-6 py-8">

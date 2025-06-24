@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import React from 'react'
 import { 
   ChartPieSlice, 
   Bank, 
@@ -13,13 +13,19 @@ import {
 } from 'phosphor-react'
 import pliantLogo from '../assets/images/pliantlogo.svg'
 
-const Sidebar = () => {
-  const [activeItem, setActiveItem] = useState('dashboard')
+type CurrentPage = 'dashboard' | 'cards'
+
+interface SidebarProps {
+  currentPage: CurrentPage
+  onNavigate: (page: CurrentPage) => void
+}
+
+const Sidebar = ({ currentPage, onNavigate }: SidebarProps) => {
 
   const navigationItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: ChartPieSlice },
+    { id: 'dashboard' as CurrentPage, label: 'Dashboard', icon: ChartPieSlice },
     { id: 'accounts', label: 'Accounts', icon: Bank },
-    { id: 'cards', label: 'Cards', icon: CreditCard },
+    { id: 'cards' as CurrentPage, label: 'Cards', icon: CreditCard },
     { id: 'transactions', label: 'Transactions', icon: ListBullets },
     { id: 'payments', label: 'Payments', icon: ArrowsLeftRight },
     { id: 'analytics', label: 'Analytics', icon: TrendUp },
@@ -47,19 +53,22 @@ const Sidebar = () => {
         <div className="space-y-1">
           {navigationItems.map((item) => {
             const IconComponent = item.icon
+            const isActive = currentPage === item.id
+            const isClickable = item.id === 'dashboard' || item.id === 'cards'
+            
             return (
               <button
                 key={item.id}
-                onClick={() => setActiveItem(item.id)}
+                onClick={() => isClickable && onNavigate(item.id as CurrentPage)}
                 className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                  activeItem === item.id
+                  isActive
                     ? 'bg-pliant-sand/10 text-pliant-charcoal border border-pliant-sand/20'
                     : 'text-pliant-charcoal/60 hover:text-pliant-charcoal hover:bg-pliant-sand/5'
-                }`}
+                } ${!isClickable ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}
               >
                 <IconComponent 
                   size={18} 
-                  weight={activeItem === item.id ? 'fill' : 'regular'}
+                  weight={isActive ? 'fill' : 'regular'}
                 />
                 <span>{item.label}</span>
               </button>
