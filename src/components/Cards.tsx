@@ -14,6 +14,7 @@ import { Button, Input } from '../design-system'
 import PageHeader from './PageHeader'
 import Table, { type TableColumn } from './Table'
 import CardCreationFlow from './CardCreationFlow'
+import CardDetailDrawer from './CardDetailDrawer'
 
 // Import card SVG assets
 import virtualCardBlue from '../assets/images/virtual_card_blue.svg'
@@ -49,6 +50,7 @@ const Cards = () => {
   const [searchTerm, setSearchTerm] = useState('')
   const [showFilters, setShowFilters] = useState(false)
   const [showCardCreation, setShowCardCreation] = useState(false)
+  const [selectedCard, setSelectedCard] = useState<CardData | null>(null)
 
   // Sample card data
   const cardsData: CardData[] = [
@@ -326,18 +328,68 @@ const Cards = () => {
         </div>
 
         {/* Cards Table */}
-        <Table
-          columns={tableColumns}
-          data={filteredCards}
-          keyExtractor={(card) => card.id}
-          emptyMessage="No cards found matching your search."
-        />
+        <div className="bg-white rounded-lg border border-pliant-sand/30 overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-pliant-sand/30">
+              
+              {/* Table Header */}
+              <thead className="bg-gray-50">
+                <tr>
+                  {tableColumns.map((column) => (
+                    <th 
+                      key={column.key}
+                      className={`px-6 py-3 text-left text-xs font-medium text-pliant-charcoal/60 uppercase tracking-wider ${column.className || ''}`}
+                    >
+                      {column.header}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+
+              {/* Table Body */}
+              <tbody className="bg-white divide-y divide-pliant-sand/30">
+                {filteredCards.map((card) => (
+                  <tr 
+                    key={card.id} 
+                    className="hover:bg-gray-50 transition-colors cursor-pointer"
+                    onClick={() => setSelectedCard(card)}
+                  >
+                    {tableColumns.map((column) => (
+                      <td 
+                        key={column.key} 
+                        className={`px-6 py-4 whitespace-nowrap ${column.className || ''}`}
+                      >
+                        {column.render(card)}
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Empty State */}
+          {filteredCards.length === 0 && (
+            <div className="text-center py-12">
+              <p className="text-pliant-charcoal/60">No cards found matching your search.</p>
+            </div>
+          )}
+        </div>
 
       </div>
 
       {/* Card Creation Flow Modal */}
       {showCardCreation && (
         <CardCreationFlow onClose={() => setShowCardCreation(false)} />
+      )}
+
+      {/* Card Detail Drawer */}
+      {selectedCard && (
+        <CardDetailDrawer 
+          card={selectedCard}
+          isOpen={!!selectedCard}
+          onClose={() => setSelectedCard(null)}
+        />
       )}
     </div>
   )
