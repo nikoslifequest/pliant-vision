@@ -577,9 +577,10 @@ const Dashboard = () => {
             <div className="flex space-x-2 mb-6">
               <button className="px-3 py-2 bg-pliant-charcoal text-white text-xs rounded-lg">Recent</button>
               <button className="px-3 py-2 bg-gray-100 text-gray-600 text-xs rounded-lg hover:bg-gray-200">My transactions</button>
-              <button className="px-3 py-2 bg-gray-100 text-gray-600 text-xs rounded-lg hover:bg-gray-200">Monthly money in</button>
-              <button className="px-3 py-2 bg-gray-100 text-gray-600 text-xs rounded-lg hover:bg-gray-200">Monthly money out</button>
-              <button className="px-3 py-2 bg-gray-100 text-gray-600 text-xs rounded-lg hover:bg-gray-200">Operating expenses</button>
+              <button className="px-3 py-2 bg-gray-100 text-gray-600 text-xs rounded-lg hover:bg-gray-200">Missing Receipts</button>
+              <button className="px-3 py-2 bg-gray-100 text-gray-600 text-xs rounded-lg hover:bg-gray-200">Needs review</button>
+              <button className="px-3 py-2 bg-gray-100 text-gray-600 text-xs rounded-lg hover:bg-gray-200">Pending transactions</button>
+              <button className="px-3 py-2 bg-gray-100 text-gray-600 text-xs rounded-lg hover:bg-gray-200">Failed transactions</button>
             </div>
 
             {/* Transaction Headers */}
