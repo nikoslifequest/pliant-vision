@@ -20,7 +20,8 @@ import {
   ArrowUpRight,
   ArrowUp,
   ArrowDown,
-  Gear
+  Gear,
+  Bank
 } from 'phosphor-react'
 import { Card, Button } from '../design-system'
 
@@ -38,14 +39,15 @@ const Dashboard = () => {
 
   // Sample Data
   const dashboardData = {
-    totalBalance: 5216471.18,
+    creditLimit: 150000,
+    availableAmount: 103075,
     monthlyChange: { amount: 1700000, percentage: 12.4 },
     accounts: [
-      { name: 'Credit Card', balance: 12505.87, icon: CreditCardIcon },
-      { name: 'Treasury', balance: 200000.00, icon: Money },
-      { name: 'Ops / Payroll', balance: 2023267.12, icon: Users },
-      { name: 'AP', balance: 226767.82, icon: Receipt },
-      { name: 'AR', balance: 0.00, icon: ChartLine }
+      { name: 'Main Account', balance: 103025.00, icon: Bank },
+      { name: 'Prefund Account', balance: 50.00, icon: Money },
+      { name: 'USD Account', balance: 0.00, icon: Money },
+      { name: 'CHF Account', balance: 0.00, icon: Money },
+      { name: 'GBP Account', balance: 0.00, icon: Money }
     ],
     creditCard: {
       balance: 12505.87,
@@ -189,7 +191,7 @@ const Dashboard = () => {
             <Card className="p-6 shadow-card h-full flex flex-col">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
-                  <h2 className="text-lg font-semibold text-pliant-charcoal">Pliant Balance</h2>
+                  <h2 className="text-lg font-semibold text-pliant-charcoal">Financial Overview</h2>
                   <div className="w-2 h-2 bg-green-500 rounded-full"></div>
                 </div>
                 <div className="flex items-center space-x-2">
@@ -204,17 +206,26 @@ const Dashboard = () => {
               
               <div className="mt-4">
                 <div className="text-3xl font-bold text-pliant-charcoal mb-2">
-                  ${dashboardData.totalBalance.toLocaleString()}
+                  €{dashboardData.availableAmount.toLocaleString()}
                 </div>
                 <div className="flex items-center space-x-4 text-sm">
-                  <span className="text-pliant-charcoal/60">Last 30 days</span>
-                  <div className="flex items-center text-green-600">
-                    <ArrowUp size={14} className="mr-1" />
-                    ${dashboardData.monthlyChange.amount.toLocaleString()}
+                  <span className="text-pliant-charcoal/60">Available Amount</span>
+                  <div className="flex items-center text-pliant-charcoal/60">
+                    Limit: €{dashboardData.creditLimit.toLocaleString()}
                   </div>
-                  <div className="flex items-center text-pliant-red">
-                    <ArrowDown size={14} className="mr-1" />
-                    $407K
+                </div>
+                <div className="mt-3">
+                  <div className="flex items-center justify-between text-sm mb-2">
+                    <span className="text-pliant-charcoal/60">Credit Utilization</span>
+                    <span className="text-pliant-charcoal/60">
+                      {Math.round(((dashboardData.creditLimit - dashboardData.availableAmount) / dashboardData.creditLimit) * 100)}%
+                    </span>
+                  </div>
+                  <div className="bg-gray-200 rounded-full h-2">
+                    <div 
+                      className="bg-pliant-blue h-2 rounded-full" 
+                      style={{ width: `${Math.round(((dashboardData.creditLimit - dashboardData.availableAmount) / dashboardData.creditLimit) * 100)}%` }}
+                    ></div>
                   </div>
                 </div>
               </div>
@@ -229,11 +240,8 @@ const Dashboard = () => {
           <div className="col-span-1">
             <Card className="p-6 shadow-card h-full">
               <div className="flex items-center justify-between mb-6">
-                <h3 className="font-semibold text-pliant-charcoal">Accounts</h3>
+                <h3 className="font-semibold text-pliant-charcoal">Bank Accounts</h3>
                 <div className="flex items-center space-x-2">
-                  <Button variant="ghost" size="sm">
-                    <Plus size={16} />
-                  </Button>
                   <Button variant="ghost" size="sm">
                     <DotsThree size={16} />
                   </Button>
