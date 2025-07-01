@@ -79,6 +79,48 @@ interface CardDetailDrawerProps {
 
 const CardDetailDrawer = ({ card, isOpen, onClose }: CardDetailDrawerProps) => {
   const [showDetails, setShowDetails] = React.useState(false)
+  const [isVisible, setIsVisible] = React.useState(false)
+  const [isAnimating, setIsAnimating] = React.useState(false)
+
+  // Handle smooth open/close animations
+  React.useEffect(() => {
+    if (isOpen) {
+      setIsVisible(true)
+      // Small delay to ensure the element is rendered before animation starts
+      const timer = setTimeout(() => {
+        setIsAnimating(true)
+      }, 50) // Increased delay to ensure smooth transition
+      return () => clearTimeout(timer)
+    } else {
+      setIsAnimating(false)
+      // Wait for animation to complete before hiding
+      const timer = setTimeout(() => {
+        setIsVisible(false)
+      }, 300) // Match the transition duration
+      return () => clearTimeout(timer)
+    }
+  }, [isOpen])
+
+  // Handle escape key and body scroll lock
+  React.useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isOpen) {
+        onClose()
+      }
+    }
+
+    if (isOpen) {
+      document.addEventListener('keydown', handleEscape)
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = 'unset'
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleEscape)
+      document.body.style.overflow = 'unset'
+    }
+  }, [isOpen, onClose])
   
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -144,18 +186,24 @@ const CardDetailDrawer = ({ card, isOpen, onClose }: CardDetailDrawerProps) => {
     { id: '3', date: '2024-01-01', action: 'Card Created', user: 'Sarah Johnson', details: 'Card was created and assigned to Marketing team' }
   ]
 
-  if (!isOpen) return null
+  if (!isVisible) return null
 
   return (
     <>
       {/* Overlay */}
       <div 
-        className="fixed inset-0 bg-black bg-opacity-50 z-40 transition-opacity"
+        className={`fixed inset-0 bg-black z-40 transition-opacity duration-300 ease-out ${
+          isAnimating ? 'bg-opacity-50' : 'bg-opacity-0'
+        }`}
         onClick={onClose}
       />
       
       {/* Drawer */}
-      <div className={`fixed right-0 top-0 h-full w-[600px] bg-gray-50 shadow-xl z-50 transform transition-transform duration-300 ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}>
+      <div className={`
+        fixed right-0 top-0 h-full w-[600px] bg-gray-50 shadow-xl z-50 
+        transform transition-all duration-300 ease-out
+        ${isAnimating ? 'translate-x-0' : 'translate-x-full'}
+      `}>
         
         {/* Header */}
         <div className="bg-white p-6 border-b border-pliant-sand/30">

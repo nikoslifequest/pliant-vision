@@ -429,4 +429,119 @@ export const Transaction: React.FC<TransactionProps> = ({
       </div>
     </div>
   )
+}
+
+// Smooth Drawer Component - Provides smooth transitions for any drawer content
+interface SmoothDrawerProps {
+  isOpen: boolean
+  onClose: () => void
+  children: React.ReactNode
+  width?: string
+  position?: 'left' | 'right'
+  showOverlay?: boolean
+  closeOnOverlayClick?: boolean
+  className?: string
+  overlayClassName?: string
+}
+
+export const SmoothDrawer: React.FC<SmoothDrawerProps> = ({
+  isOpen,
+  onClose,
+  children,
+  width = 'w-[600px]',
+  position = 'right',
+  showOverlay = true,
+  closeOnOverlayClick = true,
+  className = '',
+  overlayClassName = ''
+}) => {
+  const [isVisible, setIsVisible] = React.useState(false)
+  const [isAnimating, setIsAnimating] = React.useState(false)
+
+  // Handle smooth open/close animations
+  React.useEffect(() => {
+    if (isOpen) {
+      setIsVisible(true)
+      const timer = setTimeout(() => {
+        setIsAnimating(true)
+      }, 50) // Increased delay to ensure smooth transition
+      return () => clearTimeout(timer)
+    } else {
+      setIsAnimating(false)
+      const timer = setTimeout(() => {
+        setIsVisible(false)
+      }, 300)
+      return () => clearTimeout(timer)
+    }
+  }, [isOpen])
+
+  // Handle escape key and body scroll lock
+  React.useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isOpen) {
+        onClose()
+      }
+    }
+
+    if (isOpen) {
+      document.addEventListener('keydown', handleEscape)
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = 'unset'
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleEscape)
+      document.body.style.overflow = 'unset'
+    }
+  }, [isOpen, onClose])
+
+  const slideClasses = {
+    right: {
+      base: 'right-0',
+      closed: 'translate-x-full',
+      open: 'translate-x-0'
+    },
+    left: {
+      base: 'left-0',
+      closed: '-translate-x-full',
+      open: 'translate-x-0'
+    }
+  }
+
+  const handleOverlayClick = () => {
+    if (closeOnOverlayClick) {
+      onClose()
+    }
+  }
+
+  if (!isVisible) return null
+
+  return (
+    <>
+      {/* Overlay */}
+      {showOverlay && (
+        <div 
+          className={`fixed inset-0 bg-black z-40 transition-opacity duration-300 ease-out ${
+            isAnimating ? 'bg-opacity-50' : 'bg-opacity-0'
+          } ${overlayClassName}`}
+          onClick={handleOverlayClick}
+        />
+      )}
+      
+      {/* Drawer */}
+      <div 
+        className={`
+          fixed top-0 h-full shadow-xl z-50
+          transform transition-transform duration-300 ease-out
+          ${width}
+          ${slideClasses[position].base}
+          ${isAnimating ? slideClasses[position].open : slideClasses[position].closed}
+          ${className}
+        `}
+      >
+        {children}
+      </div>
+    </>
+  )
 } 
