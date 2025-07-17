@@ -3,6 +3,57 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  :root {
+    /* Success/Positive State Colors */
+    --success-50: #f0fdfa;
+    --success-100: #ccfbf1;
+    --success-200: #99f6e4;
+    --success-300: #5eead4;
+    --success-400: #2dd4bf;
+    --success-500: #14b8a6;
+    --success-600: #0d9488; /* Main success color */
+    --success-700: #0f766e;
+    --success-800: #115e59;
+    --success-900: #134e4a;
+  }
+}
+
+@layer components {
+  /* Success component classes */
+  .success-bg {
+    @apply bg-success-600;
+  }
+  
+  .success-bg-light {
+    @apply bg-success-50;
+  }
+  
+  .success-text {
+    @apply text-success-600;
+  }
+  
+  .success-text-light {
+    @apply text-success-800;
+  }
+  
+  .success-border {
+    @apply border-success-600;
+  }
+  
+  .success-badge {
+    @apply bg-success-50 text-success-600;
+  }
+  
+  .success-dot {
+    @apply bg-success-600;
+  }
+  
+  .success-progress {
+    @apply bg-success-500;
+  }
+}
+
 /* Custom animations */
 @keyframes fade-in-up {
   0% {

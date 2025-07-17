@@ -20,7 +20,9 @@ import {
   Users,
   Snowflake,
   ChartBar,
-  DotsThree
+  DotsThree,
+  CaretDown,
+  CaretUp
 } from 'phosphor-react'
 import { Button } from '../design-system'
 
@@ -43,6 +45,7 @@ interface CardData {
   issued: string
   validUntil: string
   account: string
+  // Legacy fields for backward compatibility
   spendingLimit: number
   available: number
   limitFrequency: 'monthly' | 'weekly' | 'daily'
@@ -50,8 +53,28 @@ interface CardData {
   transactionCount: number
   maxTransactionCount: number
   transactionFrequency: 'monthly' | 'weekly' | 'daily'
+  // New multiple limits system
+  spendingLimits?: SpendingLimit[]
+  transactionCountLimits?: TransactionCountLimit[]
+  singleTransactionLimitNew?: number
   team?: string
   project?: string
+}
+
+interface SpendingLimit {
+  id: string
+  amount: number
+  interval: 'daily' | 'weekly' | 'monthly' | 'quarterly'
+  used: number
+  resetDate: string
+}
+
+interface TransactionCountLimit {
+  id: string
+  count: number
+  interval: 'daily' | 'weekly' | 'monthly' | 'quarterly'
+  used: number
+  resetDate: string
 }
 
 interface Transaction {
@@ -81,6 +104,7 @@ const CardDetailDrawer = ({ card, isOpen, onClose }: CardDetailDrawerProps) => {
   const [showDetails, setShowDetails] = React.useState(false)
   const [isVisible, setIsVisible] = React.useState(false)
   const [isAnimating, setIsAnimating] = React.useState(false)
+  const [isSpendingOverviewExpanded, setIsSpendingOverviewExpanded] = React.useState(true)
 
   // Handle smooth open/close animations
   React.useEffect(() => {
@@ -124,7 +148,7 @@ const CardDetailDrawer = ({ card, isOpen, onClose }: CardDetailDrawerProps) => {
   
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'active': return 'text-green-600 bg-green-50'
+      case 'active': return 'text-success-600 bg-success-50'
       case 'pending': return 'text-orange-600 bg-orange-50'
       case 'requested': return 'text-blue-600 bg-blue-50'
       case 'terminated': return 'text-red-600 bg-red-50'
@@ -135,7 +159,7 @@ const CardDetailDrawer = ({ card, isOpen, onClose }: CardDetailDrawerProps) => {
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case 'active': return <CheckCircle size={16} className="text-green-600" />
+      case 'active': return <CheckCircle size={16} className="text-success-600" />
       case 'pending': return <Clock size={16} className="text-orange-600" />
       case 'requested': return <Clock size={16} className="text-blue-600" />
       case 'terminated': return <XCircle size={16} className="text-red-600" />
@@ -170,6 +194,44 @@ const CardDetailDrawer = ({ card, isOpen, onClose }: CardDetailDrawerProps) => {
 
   const usedCredit = card.spendingLimit - card.available
   const creditUsagePercentage = (usedCredit / card.spendingLimit) * 100
+
+  const intervalLabels = {
+    daily: 'Daily',
+    weekly: 'Weekly',
+    monthly: 'Monthly',
+    quarterly: 'Quarterly'
+  }
+
+  const getUsagePercentage = (used: number, total: number) => {
+    return total > 0 ? (used / total) * 100 : 0
+  }
+
+  const getUsageColor = (percentage: number) => {
+    if (percentage >= 90) return 'bg-red-500'
+    if (percentage >= 75) return 'bg-orange-500'
+    if (percentage >= 50) return 'bg-yellow-500'
+    return 'bg-success-500'
+  }
+
+  const formatCurrency = (amount: number) => {
+    return `€${amount.toLocaleString()}`
+  }
+
+  // Mock data for new limits system - in real app this would come from the card data
+  const mockSpendingLimits: SpendingLimit[] = [
+    { id: '1', amount: 1000, interval: 'monthly', used: 350, resetDate: '2024-02-01' },
+    { id: '2', amount: 50, interval: 'daily', used: 25, resetDate: '2024-01-16' }
+  ]
+
+  const mockTransactionLimits: TransactionCountLimit[] = [
+    { id: '1', count: 20, interval: 'monthly', used: 8, resetDate: '2024-02-01' },
+    { id: '2', count: 3, interval: 'daily', used: 1, resetDate: '2024-01-16' }
+  ]
+
+  // Use new limits if available, otherwise fall back to legacy system
+  const spendingLimits = card.spendingLimits || mockSpendingLimits
+  const transactionLimits = card.transactionCountLimits || mockTransactionLimits
+  const singleTxLimit = card.singleTransactionLimitNew || card.singleTransactionLimit
 
   // Sample data
   const sampleTransactions: Transaction[] = [
@@ -281,123 +343,141 @@ const CardDetailDrawer = ({ card, isOpen, onClose }: CardDetailDrawerProps) => {
               </div>
             </div>
 
-                        {/* Spending Overview */}
+            {/* Spending Overview */}
             <div className="bg-white rounded-2xl p-4 border border-gray-100/50">
-              <div className="flex items-center justify-between mb-4">
-                <div className="text-left">
-                  <div className="text-lg font-medium text-pliant-charcoal">€{usedCredit.toLocaleString()}</div>
-                  <div className="text-xs text-gray-500">Spent this {card.limitFrequency.slice(0, -2)}</div>
-                </div>
-              </div>
-
-              {/* Show Details Button */}
-              <div className="mb-4">
+              <div className="flex items-center justify-between mb-6">
                 <button 
-                  onClick={() => setShowDetails(!showDetails)}
-                  className="flex items-center justify-between w-full p-3 bg-gray-100 rounded-lg text-sm hover:bg-gray-200 transition-colors"
+                  onClick={() => setIsSpendingOverviewExpanded(!isSpendingOverviewExpanded)}
+                  className="flex items-center space-x-2 hover:bg-gray-50 p-2 -m-2 rounded-lg transition-colors"
                 >
-                  <span className="text-pliant-charcoal font-medium">
-                    {showDetails ? '▼' : '▶'} {showDetails ? 'Hide' : 'Show'} details
-                  </span>
-                  <span className="text-pliant-charcoal font-medium">€{card.available.toLocaleString()} available • €{card.spendingLimit.toLocaleString()} limit</span>
+                  <h3 className="text-lg font-medium text-pliant-charcoal">Spending Overview</h3>
+                  {isSpendingOverviewExpanded ? (
+                    <CaretUp size={16} className="text-pliant-charcoal/60" />
+                  ) : (
+                    <CaretDown size={16} className="text-pliant-charcoal/60" />
+                  )}
                 </button>
+                <Button variant="ghost" size="sm">
+                  <PencilSimple size={16} />
+                </Button>
               </div>
 
-              {/* Details Breakdown */}
-              {showDetails && (
-                <div className="mb-4 p-3 bg-gray-100 rounded-lg text-sm">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-pliant-charcoal font-medium">Total {card.limitFrequency} limit</span>
-                    <span className="text-pliant-charcoal font-medium">€{card.spendingLimit.toLocaleString()}</span>
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-2">
-                        <div className="w-2 h-2 rounded-full bg-blue-500"></div>
-                        <span className="text-gray-600">Posted</span>
-                        <div className="w-3 h-3 rounded-full bg-gray-300 flex items-center justify-center">
-                          <span className="text-xs text-gray-500">ⓘ</span>
-                        </div>
-                      </div>
-                      <span className="text-pliant-charcoal">€{usedCredit.toLocaleString()}</span>
-                    </div>
-                    
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-2">
-                        <div className="w-2 h-2 rounded-full bg-blue-400"></div>
-                        <span className="text-gray-600">Pending</span>
-                        <div className="w-3 h-3 rounded-full bg-gray-300 flex items-center justify-center">
-                          <span className="text-xs text-gray-500">ⓘ</span>
-                        </div>
-                      </div>
-                      <span className="text-pliant-charcoal">€0.00</span>
-                    </div>
-                    
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-2">
-                        <div className="w-2 h-2 rounded-full bg-green-500"></div>
-                        <span className="text-gray-600">Available to spend</span>
-                      </div>
-                      <span className="text-green-600 font-medium">€{card.available.toLocaleString()}</span>
+              {/* Collapsible Content */}
+              <div className={`overflow-hidden transition-all duration-300 ease-in-out ${
+                isSpendingOverviewExpanded ? 'max-h-[2000px] opacity-100' : 'max-h-0 opacity-0'
+              }`}>
+                {/* Spending Limits */}
+                {spendingLimits.length > 0 && (
+                  <div className="mb-6">
+                    <h4 className="text-sm font-medium text-pliant-charcoal mb-3">Spending Limits</h4>
+                    <div className="space-y-3">
+                      {spendingLimits.map((limit) => {
+                        const percentage = getUsagePercentage(limit.used, limit.amount)
+                        const remaining = limit.amount - limit.used
+                        return (
+                          <div key={limit.id} className="p-3 bg-gray-50 rounded-lg">
+                            <div className="flex items-center justify-between mb-2">
+                              <span className="text-sm font-medium text-pliant-charcoal">
+                                {intervalLabels[limit.interval]} Limit
+                              </span>
+                              <span className="text-sm text-pliant-charcoal/60">
+                                {formatCurrency(limit.used)} of {formatCurrency(limit.amount)}
+                              </span>
+                            </div>
+                            <div className="w-full bg-gray-200 rounded-full h-2 mb-2">
+                              <div 
+                                className={`${getUsageColor(percentage)} h-2 rounded-full transition-all duration-500`}
+                                style={{ width: `${Math.min(percentage, 100)}%` }}
+                              />
+                            </div>
+                            <div className="flex items-center justify-between text-xs text-pliant-charcoal/60">
+                              <span>{formatCurrency(remaining)} remaining</span>
+                              <span>Resets {new Date(limit.resetDate).toLocaleDateString()}</span>
+                            </div>
+                          </div>
+                        )
+                      })}
                     </div>
                   </div>
-                </div>
-              )}
+                )}
 
-              {/* Usage Progress */}
-              <div className="space-y-2 mb-4">
-                <div className="flex justify-between items-center">
-                  <span className="text-xs text-gray-500">Usage</span>
-                  <span className="text-xs font-medium text-pliant-charcoal">{creditUsagePercentage.toFixed(1)}%</span>
-                </div>
-                <div className="w-full bg-gray-200 rounded-full h-1.5">
-                  <div 
-                    className="bg-pliant-charcoal h-1.5 rounded-full transition-all duration-500 ease-out" 
-                    style={{ width: `${creditUsagePercentage}%` }}
-                  />
-                </div>
+                {/* Transaction Count Limits */}
+                {transactionLimits.length > 0 && (
+                  <div className="mb-6">
+                    <h4 className="text-sm font-medium text-pliant-charcoal mb-3">Transaction Limits</h4>
+                    <div className="space-y-3">
+                      {transactionLimits.map((limit) => {
+                        const percentage = getUsagePercentage(limit.used, limit.count)
+                        const remaining = limit.count - limit.used
+                        return (
+                          <div key={limit.id} className="p-3 bg-gray-50 rounded-lg">
+                            <div className="flex items-center justify-between mb-2">
+                              <span className="text-sm font-medium text-pliant-charcoal">
+                                {intervalLabels[limit.interval]} Transactions
+                              </span>
+                              <span className="text-sm text-pliant-charcoal/60">
+                                {limit.used} of {limit.count}
+                              </span>
+                            </div>
+                            
+                            {/* Segmented Progress Bar */}
+                            <div className="flex gap-1 mb-2">
+                              {Array.from({ length: limit.count }, (_, i) => (
+                                <div
+                                  key={i}
+                                  className={`flex-1 h-2 rounded-sm transition-all duration-300 ${
+                                    i < limit.used 
+                                      ? 'bg-success-600' 
+                                      : 'bg-gray-200'
+                                  }`}
+                                  style={{ minWidth: '4px' }}
+                                />
+                              ))}
+                            </div>
+                            <div className="flex items-center justify-between text-xs text-pliant-charcoal/60">
+                              <span>{remaining} remaining</span>
+                              <span>Resets {new Date(limit.resetDate).toLocaleDateString()}</span>
+                            </div>
+                          </div>
+                        )
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                {/* Single Transaction Limit */}
+                {singleTxLimit && (
+                  <div className="p-3 bg-blue-50 rounded-lg border border-blue-200">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium text-pliant-charcoal">Single Transaction Limit</span>
+                      <span className="text-sm font-semibold text-blue-600">{formatCurrency(singleTxLimit)}</span>
+                    </div>
+                    <p className="text-xs text-pliant-charcoal/60 mt-1">Maximum amount per transaction</p>
+                  </div>
+                )}
+
+                {/* Legacy fallback for old system */}
+                {(!spendingLimits.length && !transactionLimits.length) && (
+                  <div className="text-center py-4 text-pliant-charcoal/60">
+                    <p className="text-sm">No limits configured</p>
+                  </div>
+                )}
               </div>
             </div>
 
-                        {/* Card Controls */}
-            <div className="bg-white rounded-2xl p-4 border border-gray-100/50">
-              <div className="space-y-3">
-                {/* Limits */}
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-pliant-charcoal">{card.limitFrequency.charAt(0).toUpperCase() + card.limitFrequency.slice(1)} spend limit</span>
-                    <span className="text-sm font-medium text-pliant-charcoal">€{card.spendingLimit.toLocaleString()}</span>
-                  </div>
-                  
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <span className="text-sm text-pliant-charcoal">{card.limitFrequency.charAt(0).toUpperCase() + card.limitFrequency.slice(1)} withdrawal limit</span>
-                      <div className="text-xs text-gray-500">Cash withdrawn this {card.limitFrequency.slice(0, -2)}</div>
-                    </div>
-                    <div className="text-right">
-                      <div className="text-sm font-medium text-pliant-charcoal">€{card.singleTransactionLimit.toLocaleString()}</div>
-                      <div className="text-xs text-gray-500">€0.00</div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Account */}
-                <div className="pt-3 border-t border-gray-100">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-pliant-charcoal">Account</span>
-                    <span className="text-sm font-medium text-pliant-charcoal underline">{card.account} ••{card.lastFourDigits}</span>
-                  </div>
-                </div>
-
-                {/* Card Type */}
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-pliant-charcoal">Card type</span>
-                  <span className="text-sm font-medium text-pliant-charcoal">Physical {card.type.charAt(0).toUpperCase() + card.type.slice(1)}</span>
-                </div>
+            {/* Usage Progress */}
+            <div className="space-y-2 mb-4">
+              <div className="flex justify-between items-center">
+                <span className="text-xs text-gray-500">Usage</span>
+                <span className="text-xs font-medium text-pliant-charcoal">{creditUsagePercentage.toFixed(1)}%</span>
+              </div>
+              <div className="w-full bg-gray-200 rounded-full h-1.5">
+                <div 
+                  className={`${getUsageColor(creditUsagePercentage)} h-1.5 rounded-full transition-all duration-500 ease-out`} 
+                  style={{ width: `${creditUsagePercentage}%` }}
+                />
               </div>
             </div>
-
           </div>
 
           {/* Card Controls Section */}
@@ -407,7 +487,7 @@ const CardDetailDrawer = ({ card, isOpen, onClose }: CardDetailDrawerProps) => {
             <div className="space-y-3">
               <div className="flex items-center justify-between py-2">
                 <span className="text-sm text-pliant-charcoal">Dates (specific)</span>
-                <span className="text-xs text-teal-600 bg-teal-50 px-2 py-1 rounded-full font-medium">ALLOWED</span>
+                <span className="text-xs text-success-600 bg-success-50 px-2 py-1 rounded-full font-medium">ALLOWED</span>
               </div>
               <div className="text-xs text-pliant-charcoal/60 pl-0">
                 16 Jun 2025 - 31 Aug 2025

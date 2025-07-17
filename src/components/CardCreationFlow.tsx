@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { X, Check, ArrowLeft, ArrowRight, User, CreditCard, Gear, Palette, FileText } from 'phosphor-react'
+import { X, Check, ArrowLeft, ArrowRight, User, CreditCard, Gear, Palette, FileText, Plus } from 'phosphor-react'
 import { Button, Card, Select, Input } from '../design-system'
 
 interface CardCreationFlowProps {
@@ -14,10 +14,9 @@ interface FormData {
   
   // Step 2
   validPeriod: string
-  limitPeriod: string
-  limitAmount: string
-  limitCount: string
-  transactionLimit: string
+  spendingLimits: SpendingLimit[]
+  transactionCountLimits: TransactionCountLimit[]
+  singleTransactionLimit: number | null
   
   // Step 3
   categoriesMode: 'allow' | 'block'
@@ -38,6 +37,18 @@ interface FormData {
   project: string
 }
 
+interface SpendingLimit {
+  id: string
+  amount: number
+  interval: 'daily' | 'weekly' | 'monthly' | 'quarterly'
+}
+
+interface TransactionCountLimit {
+  id: string
+  count: number
+  interval: 'daily' | 'weekly' | 'monthly' | 'quarterly'
+}
+
 const CardCreationFlow: React.FC<CardCreationFlowProps> = ({ onClose }) => {
   const [currentStep, setCurrentStep] = useState(1)
   const [formData, setFormData] = useState<FormData>({
@@ -45,10 +56,9 @@ const CardCreationFlow: React.FC<CardCreationFlowProps> = ({ onClose }) => {
     useTemplate: false,
     cardType: '',
     validPeriod: '',
-    limitPeriod: '',
-    limitAmount: '',
-    limitCount: '',
-    transactionLimit: '',
+    spendingLimits: [],
+    transactionCountLimits: [],
+    singleTransactionLimit: null,
     categoriesMode: 'allow',
     categories: [],
     merchantsMode: 'allow',
@@ -143,6 +153,55 @@ const CardCreationFlow: React.FC<CardCreationFlowProps> = ({ onClose }) => {
     updateFormData('regions', updatedArray)
   }
 
+  const addSpendingLimit = () => {
+    const newLimit: SpendingLimit = {
+      id: `spending_${Date.now()}`,
+      amount: 0,
+      interval: 'daily'
+    }
+    updateFormData('spendingLimits', [...formData.spendingLimits, newLimit])
+  }
+
+  const updateSpendingLimit = (id: string, field: keyof Omit<SpendingLimit, 'id'>, value: any) => {
+    const updatedLimits = formData.spendingLimits.map(limit =>
+      limit.id === id ? { ...limit, [field]: value } : limit
+    )
+    updateFormData('spendingLimits', updatedLimits)
+  }
+
+  const removeSpendingLimit = (id: string) => {
+    const updatedLimits = formData.spendingLimits.filter(limit => limit.id !== id)
+    updateFormData('spendingLimits', updatedLimits)
+  }
+
+  const addTransactionCountLimit = () => {
+    const newLimit: TransactionCountLimit = {
+      id: `transaction_${Date.now()}`,
+      count: 0,
+      interval: 'daily'
+    }
+    updateFormData('transactionCountLimits', [...formData.transactionCountLimits, newLimit])
+  }
+
+  const updateTransactionCountLimit = (id: string, field: keyof Omit<TransactionCountLimit, 'id'>, value: any) => {
+    const updatedLimits = formData.transactionCountLimits.map(limit =>
+      limit.id === id ? { ...limit, [field]: value } : limit
+    )
+    updateFormData('transactionCountLimits', updatedLimits)
+  }
+
+  const removeTransactionCountLimit = (id: string) => {
+    const updatedLimits = formData.transactionCountLimits.filter(limit => limit.id !== id)
+    updateFormData('transactionCountLimits', updatedLimits)
+  }
+
+  const intervalLabels = {
+    daily: 'Daily',
+    weekly: 'Weekly', 
+    monthly: 'Monthly',
+    quarterly: 'Quarterly'
+  }
+
   const renderStepContent = () => {
     switch (currentStep) {
       case 1:
@@ -228,80 +287,172 @@ const CardCreationFlow: React.FC<CardCreationFlowProps> = ({ onClose }) => {
           <div className="space-y-8">
             <div>
               <h2 className="text-2xl font-bold text-pliant-charcoal mb-2">Limits & Validity</h2>
-              <p className="text-pliant-charcoal/60 mb-6">Set spending limits and validity period</p>
+              <p className="text-pliant-charcoal/60 mb-6">Set spending limits, transaction limits and validity period</p>
               
-              <div className="grid grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-sm font-medium text-pliant-charcoal mb-2">
-                    Valid Period
-                  </label>
-                  <select
-                    className="w-full px-4 py-3 border border-pliant-sand/50 rounded-lg focus:ring-2 focus:ring-pliant-blue focus:border-transparent"
-                    value={formData.validPeriod}
-                    onChange={(e) => updateFormData('validPeriod', e.target.value)}
-                  >
-                    <option value="">Select period</option>
-                    <option value="1-month">1 Month</option>
-                    <option value="3-months">3 Months</option>
-                    <option value="6-months">6 Months</option>
-                    <option value="1-year">1 Year</option>
-                    <option value="unlimited">Unlimited</option>
-                  </select>
-                </div>
+              {/* Valid Period */}
+              <div className="mb-8">
+                <label className="block text-sm font-medium text-pliant-charcoal mb-2">
+                  Valid Period
+                </label>
+                <select
+                  className="w-full max-w-md px-4 py-3 border border-pliant-sand/50 rounded-lg focus:ring-2 focus:ring-pliant-blue focus:border-transparent"
+                  value={formData.validPeriod}
+                  onChange={(e) => updateFormData('validPeriod', e.target.value)}
+                >
+                  <option value="">Select period</option>
+                  <option value="1-month">1 Month</option>
+                  <option value="3-months">3 Months</option>
+                  <option value="6-months">6 Months</option>
+                  <option value="1-year">1 Year</option>
+                  <option value="unlimited">Unlimited</option>
+                </select>
+              </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-pliant-charcoal mb-2">
-                    Limit Period
-                  </label>
-                  <select
-                    className="w-full px-4 py-3 border border-pliant-sand/50 rounded-lg focus:ring-2 focus:ring-pliant-blue focus:border-transparent"
-                    value={formData.limitPeriod}
-                    onChange={(e) => updateFormData('limitPeriod', e.target.value)}
+              {/* Spending Limits */}
+              <div className="mb-8">
+                <div className="flex items-center justify-between mb-4">
+                  <div>
+                    <h3 className="text-lg font-semibold text-pliant-charcoal">Spending Limits</h3>
+                    <p className="text-sm text-pliant-charcoal/60">Set maximum amounts that can be spent in specific time periods</p>
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={addSpendingLimit}
+                    className="flex items-center space-x-2"
                   >
-                    <option value="">Select period</option>
-                    <option value="daily">Daily</option>
-                    <option value="weekly">Weekly</option>
-                    <option value="monthly">Monthly</option>
-                    <option value="yearly">Yearly</option>
-                  </select>
+                    <Plus size={16} />
+                    <span>Add Limit</span>
+                  </Button>
                 </div>
+                
+                {formData.spendingLimits.length === 0 ? (
+                  <div className="text-center py-8 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
+                    <p className="text-pliant-charcoal/60">No spending limits set. Click "Add Limit" to create one.</p>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {formData.spendingLimits.map((limit) => (
+                      <div key={limit.id} className="flex items-center space-x-4 p-4 bg-white border border-gray-200 rounded-lg">
+                        <div className="flex-1 grid grid-cols-2 gap-4">
+                          <div>
+                            <label className="block text-xs font-medium text-pliant-charcoal/60 mb-1">Amount (€)</label>
+                            <input
+                              type="number"
+                              min="0"
+                              step="0.01"
+                              placeholder="0.00"
+                              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-pliant-blue focus:border-transparent"
+                              value={limit.amount || ''}
+                              onChange={(e) => updateSpendingLimit(limit.id, 'amount', parseFloat(e.target.value) || 0)}
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-xs font-medium text-pliant-charcoal/60 mb-1">Interval</label>
+                            <select
+                              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-pliant-blue focus:border-transparent"
+                              value={limit.interval}
+                              onChange={(e) => updateSpendingLimit(limit.id, 'interval', e.target.value)}
+                            >
+                              <option value="daily">Daily</option>
+                              <option value="weekly">Weekly</option>
+                              <option value="monthly">Monthly</option>
+                              <option value="quarterly">Quarterly</option>
+                            </select>
+                          </div>
+                        </div>
+                        <button
+                          onClick={() => removeSpendingLimit(limit.id)}
+                          className="p-2 text-red-500 hover:bg-red-50 rounded-md transition-colors"
+                        >
+                          <X size={16} />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
 
-                <div>
+              {/* Transaction Count Limits */}
+              <div className="mb-8">
+                <div className="flex items-center justify-between mb-4">
+                  <div>
+                    <h3 className="text-lg font-semibold text-pliant-charcoal">Transaction Count Limits</h3>
+                    <p className="text-sm text-pliant-charcoal/60">Set maximum number of transactions in specific time periods</p>
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={addTransactionCountLimit}
+                    className="flex items-center space-x-2"
+                  >
+                    <Plus size={16} />
+                    <span>Add Limit</span>
+                  </Button>
+                </div>
+                
+                {formData.transactionCountLimits.length === 0 ? (
+                  <div className="text-center py-8 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
+                    <p className="text-pliant-charcoal/60">No transaction count limits set. Click "Add Limit" to create one.</p>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {formData.transactionCountLimits.map((limit) => (
+                      <div key={limit.id} className="flex items-center space-x-4 p-4 bg-white border border-gray-200 rounded-lg">
+                        <div className="flex-1 grid grid-cols-2 gap-4">
+                          <div>
+                            <label className="block text-xs font-medium text-pliant-charcoal/60 mb-1">Max Transactions</label>
+                            <input
+                              type="number"
+                              min="1"
+                              placeholder="1"
+                              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-pliant-blue focus:border-transparent"
+                              value={limit.count || ''}
+                              onChange={(e) => updateTransactionCountLimit(limit.id, 'count', parseInt(e.target.value) || 0)}
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-xs font-medium text-pliant-charcoal/60 mb-1">Interval</label>
+                            <select
+                              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-pliant-blue focus:border-transparent"
+                              value={limit.interval}
+                              onChange={(e) => updateTransactionCountLimit(limit.id, 'interval', e.target.value)}
+                            >
+                              <option value="daily">Daily</option>
+                              <option value="weekly">Weekly</option>
+                              <option value="monthly">Monthly</option>
+                              <option value="quarterly">Quarterly</option>
+                            </select>
+                          </div>
+                        </div>
+                        <button
+                          onClick={() => removeTransactionCountLimit(limit.id)}
+                          className="p-2 text-red-500 hover:bg-red-50 rounded-md transition-colors"
+                        >
+                          <X size={16} />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Single Transaction Limit */}
+              <div>
+                <h3 className="text-lg font-semibold text-pliant-charcoal mb-2">Single Transaction Limit</h3>
+                <p className="text-sm text-pliant-charcoal/60 mb-4">Maximum amount that can be spent in a single transaction</p>
+                <div className="max-w-md">
                   <label className="block text-sm font-medium text-pliant-charcoal mb-2">
-                    Limit Amount (€)
+                    Maximum Amount (€)
                   </label>
                   <input
                     type="number"
-                    placeholder="0.00"
-                    className="w-full px-4 py-3 border border-pliant-sand/50 rounded-lg focus:ring-2 focus:ring-pliant-blue focus:border-transparent"
-                    value={formData.limitAmount}
-                    onChange={(e) => updateFormData('limitAmount', e.target.value)}
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-pliant-charcoal mb-2">
-                    Transaction Count Limit
-                  </label>
-                  <input
-                    type="number"
+                    min="0"
+                    step="0.01"
                     placeholder="Unlimited"
                     className="w-full px-4 py-3 border border-pliant-sand/50 rounded-lg focus:ring-2 focus:ring-pliant-blue focus:border-transparent"
-                    value={formData.limitCount}
-                    onChange={(e) => updateFormData('limitCount', e.target.value)}
-                  />
-                </div>
-
-                <div className="col-span-2">
-                  <label className="block text-sm font-medium text-pliant-charcoal mb-2">
-                    Single Transaction Limit (€)
-                  </label>
-                  <input
-                    type="number"
-                    placeholder="0.00"
-                    className="w-full px-4 py-3 border border-pliant-sand/50 rounded-lg focus:ring-2 focus:ring-pliant-blue focus:border-transparent"
-                    value={formData.transactionLimit}
-                    onChange={(e) => updateFormData('transactionLimit', e.target.value)}
+                    value={formData.singleTransactionLimit ? formData.singleTransactionLimit : ''}
+                    onChange={(e) => updateFormData('singleTransactionLimit', e.target.value ? parseFloat(e.target.value) : null)}
                   />
                 </div>
               </div>
@@ -715,22 +866,32 @@ const CardCreationFlow: React.FC<CardCreationFlowProps> = ({ onClose }) => {
 
                 <Card className="p-6">
                   <h3 className="font-semibold text-pliant-charcoal mb-4">Limits & Validity</h3>
-                  <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div className="space-y-3 text-sm">
                     <div>
                       <span className="text-pliant-charcoal/60">Valid Period:</span>
                       <span className="ml-2 font-medium">{formData.validPeriod || 'Not set'}</span>
                     </div>
                     <div>
-                      <span className="text-pliant-charcoal/60">Limit Amount:</span>
-                      <span className="ml-2 font-medium">{formData.limitAmount ? `€${formData.limitAmount}` : 'Unlimited'}</span>
+                      <span className="text-pliant-charcoal/60">Spending Limits:</span>
+                      <span className="ml-2 font-medium">
+                        {formData.spendingLimits.length > 0 
+                          ? formData.spendingLimits.map(limit => `€${limit.amount} ${intervalLabels[limit.interval]}`).join(', ')
+                          : 'No limits set'
+                        }
+                      </span>
                     </div>
                     <div>
-                      <span className="text-pliant-charcoal/60">Limit Period:</span>
-                      <span className="ml-2 font-medium">{formData.limitPeriod || 'Not set'}</span>
+                      <span className="text-pliant-charcoal/60">Transaction Count Limits:</span>
+                      <span className="ml-2 font-medium">
+                        {formData.transactionCountLimits.length > 0 
+                          ? formData.transactionCountLimits.map(limit => `${limit.count} transactions ${intervalLabels[limit.interval]}`).join(', ')
+                          : 'No limits set'
+                        }
+                      </span>
                     </div>
                     <div>
-                      <span className="text-pliant-charcoal/60">Transaction Limit:</span>
-                      <span className="ml-2 font-medium">{formData.transactionLimit ? `€${formData.transactionLimit}` : 'Unlimited'}</span>
+                      <span className="text-pliant-charcoal/60">Single Transaction Limit:</span>
+                      <span className="ml-2 font-medium">{formData.singleTransactionLimit ? `€${formData.singleTransactionLimit}` : 'Unlimited'}</span>
                     </div>
                   </div>
                 </Card>
@@ -821,7 +982,7 @@ const CardCreationFlow: React.FC<CardCreationFlowProps> = ({ onClose }) => {
                 <div key={step.id} className="relative">
                   <div className="flex items-start space-x-4 mb-8">
                     <div className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center transition-all relative z-10 ${
-                      isCompleted ? 'bg-green-500' : 
+                      isCompleted ? 'bg-success-600' : 
                       isCurrent ? 'bg-pliant-blue' : 
                       'bg-white/20'
                     }`}>
@@ -833,7 +994,7 @@ const CardCreationFlow: React.FC<CardCreationFlowProps> = ({ onClose }) => {
                     </div>
                     
                     <div className="flex-1 min-w-0">
-                      <h3 className={`font-semibold ${isCurrent ? 'text-white' : isCompleted ? 'text-green-400' : 'text-white/60'}`}>
+                      <h3 className={`font-semibold ${isCurrent ? 'text-white' : isCompleted ? 'text-success-400' : 'text-white/60'}`}>
                         {step.title}
                       </h3>
                       <p className={`text-sm ${isCurrent ? 'text-white/80' : 'text-white/50'}`}>

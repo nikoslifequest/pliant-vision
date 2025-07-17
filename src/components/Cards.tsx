@@ -158,7 +158,7 @@ const Cards = () => {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'active': return 'text-green-600 bg-green-50'
+      case 'active': return 'text-success-600 bg-success-50'
       case 'pending': return 'text-orange-600 bg-orange-50'
       case 'requested': return 'text-blue-600 bg-blue-50'
       case 'terminated': return 'text-red-600 bg-red-50'
@@ -169,7 +169,7 @@ const Cards = () => {
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case 'active': return <CheckCircle size={16} className="text-green-600" />
+      case 'active': return <CheckCircle size={16} className="text-success-600" />
       case 'pending': return <Clock size={16} className="text-orange-600" />
       case 'requested': return <Clock size={16} className="text-blue-600" />
       case 'terminated': return <XCircle size={16} className="text-red-600" />

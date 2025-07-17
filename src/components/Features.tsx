@@ -4,7 +4,7 @@ const Features = () => {
       icon: "🔒",
       title: "Bank-Level Security",
       description: "Advanced encryption and biometric authentication keep your transactions secure",
-      color: "from-green-500 to-emerald-600"
+      color: "from-success-500 to-success-600"
     },
     {
       icon: "⚡",

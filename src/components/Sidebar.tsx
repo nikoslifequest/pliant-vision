@@ -13,7 +13,7 @@ import {
 } from 'phosphor-react'
 import pliantLogo from '../assets/images/pliantlogo.svg'
 
-type CurrentPage = 'dashboard' | 'cards'
+type CurrentPage = 'dashboard' | 'cards' | 'transactions'
 
 interface SidebarProps {
   currentPage: CurrentPage
@@ -54,7 +54,7 @@ const Sidebar = ({ currentPage, onNavigate }: SidebarProps) => {
           {navigationItems.map((item) => {
             const IconComponent = item.icon
             const isActive = currentPage === item.id
-            const isClickable = item.id === 'dashboard' || item.id === 'cards'
+            const isClickable = item.id === 'dashboard' || item.id === 'cards' || item.id === 'transactions'
             
             return (
               <button

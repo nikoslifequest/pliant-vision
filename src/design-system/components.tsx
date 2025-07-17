@@ -115,7 +115,7 @@ export const Badge: React.FC<BadgeProps> = ({
   
   const variantStyles = {
     default: 'bg-neutral-100 text-neutral-800',
-    success: 'bg-green-100 text-green-800',
+    success: 'bg-success-50 text-success-800',
     warning: 'bg-yellow-100 text-yellow-800',
     error: 'bg-red-100 text-red-800',
     info: 'bg-blue-100 text-blue-800'
@@ -151,7 +151,7 @@ export const StatusDot: React.FC<StatusDotProps> = ({
   pulse = false
 }) => {
   const variantStyles = {
-    online: 'bg-green-500',
+    online: 'bg-success-600',
     offline: 'bg-neutral-400',
     busy: 'bg-red-500',
     away: 'bg-yellow-500'
@@ -422,7 +422,7 @@ export const Transaction: React.FC<TransactionProps> = ({
           </div>
         </div>
         <div className="text-right">
-          <p className={`font-semibold ${isPositive ? 'text-green-600' : 'text-neutral-900'}`}>
+          <p className={`font-semibold ${isPositive ? 'text-success-600' : 'text-neutral-900'}`}>
             {amount}
           </p>
         </div>

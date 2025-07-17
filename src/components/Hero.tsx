@@ -39,7 +39,7 @@ const Hero = ({ onGetStarted }: HeroProps) => {
           {/* Trust indicators */}
           <div className="flex items-center justify-center space-x-8 text-sm text-gray-500">
             <div className="flex items-center space-x-2">
-              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+              <div className="w-2 h-2 bg-success-600 rounded-full"></div>
               <span>Bank-level Security</span>
             </div>
             <div className="flex items-center space-x-2">

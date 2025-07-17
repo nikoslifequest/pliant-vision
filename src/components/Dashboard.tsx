@@ -208,7 +208,7 @@ const Dashboard = () => {
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
                   <h2 className="text-lg font-semibold text-pliant-charcoal">Financial Overview</h2>
-                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  <div className="w-2 h-2 bg-success-600 rounded-full"></div>
                 </div>
                 <div className="flex items-center space-x-2">
                   <Button variant="ghost" size="sm">
@@ -318,8 +318,8 @@ const Dashboard = () => {
             </div>
             
             <div className="flex items-center space-x-2 mb-4">
-              <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center">
-                <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+              <div className="w-6 h-6 bg-success-100 rounded-full flex items-center justify-center">
+                <div className="w-3 h-3 bg-success-600 rounded-full"></div>
               </div>
               <div className="text-2xl font-bold text-pliant-charcoal">
                 {dashboardData.co2Data.compensated.toFixed(2)} t
@@ -367,8 +367,8 @@ const Dashboard = () => {
             </div>
 
             <div className="flex items-center space-x-2 mb-4">
-              <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center">
-                <span className="text-green-600 text-xs font-bold">€</span>
+              <div className="w-6 h-6 bg-success-100 rounded-full flex items-center justify-center">
+                <span className="text-success-600 text-xs font-bold">€</span>
               </div>
               <div className="text-2xl font-bold text-pliant-charcoal">
                 €{dashboardData.cashback.totalEarned.toLocaleString()}
@@ -378,7 +378,7 @@ const Dashboard = () => {
             <div className="grid grid-cols-2 gap-4 mb-4">
               <div>
                 <div className="text-sm text-pliant-charcoal/60 mb-1">This Month</div>
-                <div className="text-lg font-semibold text-green-600">
+                <div className="text-lg font-semibold text-success-600">
                   €{dashboardData.cashback.thisMonth.toLocaleString()}
                 </div>
               </div>
@@ -478,7 +478,7 @@ const Dashboard = () => {
                 <div className="flex items-center space-x-2 mb-2">
                   <h4 className="text-sm font-medium text-gray-700">Money in</h4>
                 </div>
-                <div className="text-2xl font-bold text-green-600 mb-4">
+                <div className="text-2xl font-bold text-success-600 mb-4">
                   ${dashboardData.moneyMovement.moneyIn.toLocaleString('en-US', { minimumFractionDigits: 2 })}
                 </div>
                 
@@ -610,7 +610,7 @@ const Dashboard = () => {
                     </div>
                   </div>
                   <div className={`col-span-2 text-right text-sm font-medium ${
-                    transaction.amount > 0 ? 'text-green-600' : 'text-gray-900'
+                    transaction.amount > 0 ? 'text-success-600' : 'text-gray-900'
                   }`}>
                     {transaction.amount > 0 ? '+' : ''}${Math.abs(transaction.amount).toLocaleString('en-US', { minimumFractionDigits: 2 })}
                   </div>

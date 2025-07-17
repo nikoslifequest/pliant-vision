@@ -2,9 +2,10 @@ import { useState } from 'react'
 import Sidebar from './components/Sidebar'
 import Dashboard from './components/Dashboard'
 import Cards from './components/Cards'
+import Transactions from './components/Transactions'
 import Login from './components/Login'
 
-type CurrentPage = 'dashboard' | 'cards'
+type CurrentPage = 'dashboard' | 'cards' | 'transactions'
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
@@ -28,6 +29,8 @@ function App() {
         return <Dashboard />
       case 'cards':
         return <Cards />
+      case 'transactions':
+        return <Transactions />
       default:
         return <Dashboard />
     }
